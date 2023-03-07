@@ -465,7 +465,7 @@ type ConsulIngressListener struct {
 	Port     int                     `hcl:"port,optional"`
 	Protocol string                  `hcl:"protocol,optional"`
 	Services []*ConsulIngressService `hcl:"service,block"`
-	TLS      *ConsulGatewayTLSConfig `hcl:"tls,block"`
+	TLS      *ConsulGatewayTLSConfig `hcl:"tls,optional" mapstructure:"tls"`
 }
 
 func (l *ConsulIngressListener) Canonicalize() {
