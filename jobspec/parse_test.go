@@ -1627,6 +1627,25 @@ func TestParse(t *testing.T) {
 											Hosts: []string{
 												"2.2.2.2:8080",
 											},
+											Namespace: "foo",
+											Partition: "bar",
+											TLS: &api.ConsulGatewayTLSConfig{
+												SDS: &api.ConsulGatewayTLSSDSConfig{
+													ClusterName:  "foo",
+													CertResource: "bar",
+												},
+											},
+											RequestHeaders: &api.ConsulHTTPHeaderModifiers{
+												Add: map[string]string{
+													"test": "testvalue",
+												},
+											},
+											ResponseHeaders: &api.ConsulHTTPHeaderModifiers{
+												Remove: []string{"test2"},
+											},
+											MaxConnections:        uint32Pointer(5120),
+											MaxPendingRequests:    uint32Pointer(512),
+											MaxConcurrentRequests: uint32Pointer(2048),
 										}},
 									},
 									},
@@ -1955,4 +1974,8 @@ func TestPortParsing(t *testing.T) {
 	require.Len(t, job.TaskGroups[0].Networks[0].DynamicPorts, 1)
 	require.Equal(t, 9000, job.TaskGroups[0].Networks[0].ReservedPorts[0].Value)
 	require.Equal(t, 0, job.TaskGroups[0].Networks[0].DynamicPorts[0].Value)
+}
+
+func uint32Pointer(v uint32) *uint32 {
+	return &v
 }

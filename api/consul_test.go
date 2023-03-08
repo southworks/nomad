@@ -404,8 +404,37 @@ func TestConsulIngressConfigEntry_Copy(t *testing.T) {
 			Port:     1111,
 			Protocol: "http",
 			Services: []*ConsulIngressService{{
-				Name:  "service1",
-				Hosts: []string{"1.1.1.1", "1.1.1.1:9000"},
+				Name:      "service1",
+				Hosts:     []string{"1.1.1.1", "1.1.1.1:9000"},
+				Namespace: "foo",
+				Partition: "bar",
+				TLS: &ConsulGatewayTLSConfig{
+					SDS: &ConsulGatewayTLSSDSConfig{
+						ClusterName:  "foo",
+						CertResource: "bar",
+					},
+				},
+				RequestHeaders: &ConsulHTTPHeaderModifiers{
+					Add: map[string]string{
+						"test": "testvalue",
+					},
+					Set: map[string]string{
+						"test1": "testvalue1",
+					},
+					Remove: []string{"test2"},
+				},
+				ResponseHeaders: &ConsulHTTPHeaderModifiers{
+					Add: map[string]string{
+						"test": "testvalue",
+					},
+					Set: map[string]string{
+						"test1": "testvalue1",
+					},
+					Remove: []string{"test2"},
+				},
+				MaxConnections:        uint32Pointer(5120),
+				MaxPendingRequests:    uint32Pointer(512),
+				MaxConcurrentRequests: uint32Pointer(2048),
 			}, {
 				Name:  "service2",
 				Hosts: []string{"2.2.2.2"},
@@ -568,4 +597,8 @@ func TestConsulGatewayTLSConfig_Copy(t *testing.T) {
 		result := c.Copy()
 		must.Eq(t, c, result)
 	})
+}
+
+func uint32Pointer(v uint32) *uint32 {
+	return &v
 }

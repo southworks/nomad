@@ -426,15 +426,15 @@ func (tc *ConsulGatewayTLSConfig) Copy() *ConsulGatewayTLSConfig {
 type ConsulHTTPHeaderModifiers struct {
 	// Add is a set of name -> value pairs that should be appended to the request
 	// or response (i.e. allowing duplicates if the same header already exists).
-	Add map[string]string `hcl:"add,omitempty"`
+	Add map[string]string `hcl:"add,omitempty" mapstructure:"add"`
 
 	// Set is a set of name -> value pairs that should be added to the request or
 	// response, overwriting any existing header values of the same name.
-	Set map[string]string `hcl:"set,omitempty"`
+	Set map[string]string `hcl:"set,omitempty" mapstructure:"set"`
 
 	// Remove is the set of header names that should be stripped from the request
 	// or response.
-	Remove []string `hcl:"remove,omitempty"`
+	Remove []string `hcl:"remove,omitempty" mapstructure:"remove"`
 }
 
 func (h *ConsulHTTPHeaderModifiers) Copy() *ConsulHTTPHeaderModifiers {
@@ -464,11 +464,11 @@ type ConsulIngressService struct {
 	Namespace             string                     `hcl:"namespace,optional"`
 	Partition             string                     `hcl:"partition,optional"`
 	TLS                   *ConsulGatewayTLSConfig    `hcl:"tls,optional" mapstructure:"tls"`
-	RequestHeaders        *ConsulHTTPHeaderModifiers `hcl:"request_headers,optional"`
-	ResponseHeaders       *ConsulHTTPHeaderModifiers `hcl:"response_headers,optional"`
-	MaxConnections        *uint32                    `hcl:"max_connections,optional"`
-	MaxPendingRequests    *uint32                    `hcl:"max_pending_requests,optional"`
-	MaxConcurrentRequests *uint32                    `hcl:"max_concurrent_requests,optional"`
+	RequestHeaders        *ConsulHTTPHeaderModifiers `hcl:"request_headers,optional" mapstructure:"request_headers"`
+	ResponseHeaders       *ConsulHTTPHeaderModifiers `hcl:"response_headers,optional" mapstructure:"response_headers"`
+	MaxConnections        *uint32                    `hcl:"max_connections,optional" mapstructure:"max_connections"`
+	MaxPendingRequests    *uint32                    `hcl:"max_pending_requests,optional" mapstructure:"max_pending_requests"`
+	MaxConcurrentRequests *uint32                    `hcl:"max_concurrent_requests,optional" mapstructure:"max_concurrent_requests"`
 }
 
 func (s *ConsulIngressService) Canonicalize() {
