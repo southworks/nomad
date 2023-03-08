@@ -419,13 +419,56 @@ func (tc *ConsulGatewayTLSConfig) Copy() *ConsulGatewayTLSConfig {
 	return result
 }
 
+// ConsulHTTPHeaderModifiers is a set of rules for HTTP header modification that
+// should be performed by proxies as the request passes through them. It can
+// operate on either request or response headers depending on the context in
+// which it is used.
+type ConsulHTTPHeaderModifiers struct {
+	// Add is a set of name -> value pairs that should be appended to the request
+	// or response (i.e. allowing duplicates if the same header already exists).
+	Add map[string]string `hcl:"add,omitempty"`
+
+	// Set is a set of name -> value pairs that should be added to the request or
+	// response, overwriting any existing header values of the same name.
+	Set map[string]string `hcl:"set,omitempty"`
+
+	// Remove is the set of header names that should be stripped from the request
+	// or response.
+	Remove []string `hcl:"remove,omitempty"`
+}
+
+func (h *ConsulHTTPHeaderModifiers) Copy() *ConsulHTTPHeaderModifiers {
+	if h == nil {
+		return nil
+	}
+
+	var remove []string
+	if n := len(h.Remove); n > 0 {
+		remove = make([]string, n)
+		copy(remove, h.Remove)
+	}
+
+	return &ConsulHTTPHeaderModifiers{
+		Add:    maps.Clone(h.Add),
+		Set:    maps.Clone(h.Set),
+		Remove: remove,
+	}
+}
+
 // ConsulIngressService is used to configure a service fronted by the ingress gateway.
 type ConsulIngressService struct {
 	// Namespace is not yet supported.
 	// Namespace string
-	Name string `hcl:"name,optional"`
-
-	Hosts []string `hcl:"hosts,optional"`
+	Name                  string                     `hcl:"name,optional"`
+	Hosts                 []string                   `hcl:"hosts,optional"`
+	Namespace             string                     `hcl:"namespace,optional"`
+	Partition             string                     `hcl:"partition,optional"`
+	TLS                   *ConsulGatewayTLSConfig    `hcl:"tls,optional" mapstructure:"tls"`
+	RequestHeaders        *ConsulHTTPHeaderModifiers `hcl:"request_headers,optional"`
+	ResponseHeaders       *ConsulHTTPHeaderModifiers `hcl:"response_headers,optional"`
+	MaxConnections        *uint32                    `hcl:"max_connections,optional"`
+	MaxPendingRequests    *uint32                    `hcl:"max_pending_requests,optional"`
+	MaxConcurrentRequests *uint32                    `hcl:"max_concurrent_requests,optional"`
 }
 
 func (s *ConsulIngressService) Canonicalize() {
@@ -450,8 +493,16 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 	}
 
 	return &ConsulIngressService{
-		Name:  s.Name,
-		Hosts: hosts,
+		Name:                  s.Name,
+		Hosts:                 hosts,
+		Namespace:             s.Namespace,
+		Partition:             s.Partition,
+		TLS:                   s.TLS.Copy(),
+		RequestHeaders:        s.RequestHeaders.Copy(),
+		ResponseHeaders:       s.ResponseHeaders.Copy(),
+		MaxConnections:        s.MaxConnections,
+		MaxPendingRequests:    s.MaxPendingRequests,
+		MaxConcurrentRequests: s.MaxConcurrentRequests,
 	}
 }
 
