@@ -1677,7 +1677,12 @@ func apiUpstreamsToStructs(in []*api.ConsulUpstream) []structs.ConsulUpstream {
 		upstreams[i] = structs.ConsulUpstream{
 			DestinationName:      upstream.DestinationName,
 			DestinationNamespace: upstream.DestinationNamespace,
+			DestinationPeer:      upstream.DestinationPeer,
+			DestinationPartition: upstream.DestinationPartition,
+			DestinationType:      structs.UpstreamDestType(upstream.DestinationType),
 			LocalBindPort:        upstream.LocalBindPort,
+			LocalBindSocketPath:  upstream.LocalBindSocketPath,
+			LocalBindSocketMode:  upstream.LocalBindSocketMode,
 			Datacenter:           upstream.Datacenter,
 			LocalBindAddress:     upstream.LocalBindAddress,
 			MeshGateway:          apiMeshGatewayToStructs(upstream.MeshGateway),
