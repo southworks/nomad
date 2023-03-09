@@ -52,9 +52,7 @@ job "connect_gateway_ingress" {
               protocol = "http"
               service {
                 name  = "nginx"
-                hosts = ["2.2.2.2:8080"]
-                namespace = "foo"
-                partition = "bar"
+                hosts = ["2.2.2.2:8080"]                
                 tls {
                   sds_config {
                     cluster_name = "foo"

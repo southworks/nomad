@@ -1628,8 +1628,6 @@ func TestParse(t *testing.T) {
 											Hosts: []string{
 												"2.2.2.2:8080",
 											},
-											Namespace: "foo",
-											Partition: "bar",
 											TLS: &api.ConsulGatewayTLSConfig{
 												SDS: &api.ConsulGatewayTLSSDSConfig{
 													ClusterName:  "foo",

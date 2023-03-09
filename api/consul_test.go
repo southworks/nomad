@@ -404,10 +404,8 @@ func TestConsulIngressConfigEntry_Copy(t *testing.T) {
 			Port:     1111,
 			Protocol: "http",
 			Services: []*ConsulIngressService{{
-				Name:      "service1",
-				Hosts:     []string{"1.1.1.1", "1.1.1.1:9000"},
-				Namespace: "foo",
-				Partition: "bar",
+				Name:  "service1",
+				Hosts: []string{"1.1.1.1", "1.1.1.1:9000"},
 				TLS: &ConsulGatewayTLSConfig{
 					SDS: &ConsulGatewayTLSSDSConfig{
 						ClusterName:  "foo",

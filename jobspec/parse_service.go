@@ -494,8 +494,6 @@ func parseConsulIngressService(o *ast.ObjectItem) (*api.ConsulIngressService, er
 	valid := []string{
 		"name",
 		"hosts",
-		"namespace",
-		"partition",
 		"tls",
 		"request_headers",
 		"response_headers",

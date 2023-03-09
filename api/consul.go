@@ -461,8 +461,6 @@ type ConsulIngressService struct {
 	// Namespace string
 	Name                  string                     `hcl:"name,optional"`
 	Hosts                 []string                   `hcl:"hosts,optional"`
-	Namespace             string                     `hcl:"namespace,optional"`
-	Partition             string                     `hcl:"partition,optional"`
 	TLS                   *ConsulGatewayTLSConfig    `hcl:"tls,optional" mapstructure:"tls"`
 	RequestHeaders        *ConsulHTTPHeaderModifiers `hcl:"request_headers,optional" mapstructure:"request_headers"`
 	ResponseHeaders       *ConsulHTTPHeaderModifiers `hcl:"response_headers,optional" mapstructure:"response_headers"`
@@ -495,8 +493,6 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 	return &ConsulIngressService{
 		Name:                  s.Name,
 		Hosts:                 hosts,
-		Namespace:             s.Namespace,
-		Partition:             s.Partition,
 		TLS:                   s.TLS.Copy(),
 		RequestHeaders:        s.RequestHeaders.Copy(),
 		ResponseHeaders:       s.ResponseHeaders.Copy(),

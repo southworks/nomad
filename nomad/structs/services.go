@@ -1943,8 +1943,6 @@ func (h *ConsulHTTPHeaderModifiers) Equal(o *ConsulHTTPHeaderModifiers) bool {
 type ConsulIngressService struct {
 	Name                  string
 	Hosts                 []string
-	Namespace             string
-	Partition             string
 	TLS                   *ConsulGatewayTLSConfig
 	RequestHeaders        *ConsulHTTPHeaderModifiers
 	ResponseHeaders       *ConsulHTTPHeaderModifiers
@@ -1967,8 +1965,6 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 	return &ConsulIngressService{
 		Name:                  s.Name,
 		Hosts:                 hosts,
-		Namespace:             s.Namespace,
-		Partition:             s.Partition,
 		TLS:                   s.TLS.Copy(),
 		RequestHeaders:        s.RequestHeaders.Copy(),
 		ResponseHeaders:       s.ResponseHeaders.Copy(),
@@ -1988,14 +1984,6 @@ func (s *ConsulIngressService) Equal(o *ConsulIngressService) bool {
 	}
 
 	if !helper.SliceSetEq(s.Hosts, o.Hosts) {
-		return false
-	}
-
-	if s.Namespace != o.Namespace {
-		return false
-	}
-
-	if s.Partition != o.Partition {
 		return false
 	}
 

@@ -1615,8 +1615,6 @@ func apiConnectIngressServiceToStructs(in *api.ConsulIngressService) *structs.Co
 	return &structs.ConsulIngressService{
 		Name:                  in.Name,
 		Hosts:                 slices.Clone(in.Hosts),
-		Namespace:             in.Namespace,
-		Partition:             in.Partition,
 		TLS:                   apiConnectGatewayTLSConfig(in.TLS),
 		RequestHeaders:        apiConsulHTTPHeaderModifiersToStructs(in.RequestHeaders),
 		ResponseHeaders:       apiConsulHTTPHeaderModifiersToStructs(in.ResponseHeaders),

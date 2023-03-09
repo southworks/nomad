@@ -3847,10 +3847,8 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 						Port:     1111,
 						Protocol: "http",
 						Services: []*structs.ConsulIngressService{{
-							Name:      "ingress1",
-							Hosts:     []string{"host1"},
-							Namespace: "foo",
-							Partition: "bar",
+							Name:  "ingress1",
+							Hosts: []string{"host1"},
 							TLS: &structs.ConsulGatewayTLSConfig{
 								SDS: &structs.ConsulGatewayTLSSDSConfig{
 									ClusterName:  "foo",
@@ -3902,10 +3900,8 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 							Port:     1111,
 							Protocol: "http",
 							Services: []*api.ConsulIngressService{{
-								Name:      "ingress1",
-								Hosts:     []string{"host1"},
-								Namespace: "foo",
-								Partition: "bar",
+								Name:  "ingress1",
+								Hosts: []string{"host1"},
 								TLS: &api.ConsulGatewayTLSConfig{
 									SDS: &api.ConsulGatewayTLSSDSConfig{
 										ClusterName:  "foo",
