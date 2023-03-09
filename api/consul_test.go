@@ -432,9 +432,9 @@ func TestConsulIngressConfigEntry_Copy(t *testing.T) {
 					},
 					Remove: []string{"test2"},
 				},
-				MaxConnections:        uint32Pointer(5120),
-				MaxPendingRequests:    uint32Pointer(512),
-				MaxConcurrentRequests: uint32Pointer(2048),
+				MaxConnections:        pointerOf(uint32(5120)),
+				MaxPendingRequests:    pointerOf(uint32(512)),
+				MaxConcurrentRequests: pointerOf(uint32(2048)),
 			}, {
 				Name:  "service2",
 				Hosts: []string{"2.2.2.2"},
@@ -597,8 +597,4 @@ func TestConsulGatewayTLSConfig_Copy(t *testing.T) {
 		result := c.Copy()
 		must.Eq(t, c, result)
 	})
-}
-
-func uint32Pointer(v uint32) *uint32 {
-	return &v
 }

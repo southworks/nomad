@@ -9,6 +9,7 @@ import (
 	capi "github.com/hashicorp/consul/api"
 	"github.com/hashicorp/nomad/api"
 	"github.com/hashicorp/nomad/ci"
+	"github.com/hashicorp/nomad/helper/pointer"
 	"github.com/stretchr/testify/require"
 )
 
@@ -1643,9 +1644,9 @@ func TestParse(t *testing.T) {
 											ResponseHeaders: &api.ConsulHTTPHeaderModifiers{
 												Remove: []string{"test2"},
 											},
-											MaxConnections:        uint32Pointer(5120),
-											MaxPendingRequests:    uint32Pointer(512),
-											MaxConcurrentRequests: uint32Pointer(2048),
+											MaxConnections:        pointer.Of(uint32(5120)),
+											MaxPendingRequests:    pointer.Of(uint32(512)),
+											MaxConcurrentRequests: pointer.Of(uint32(2048)),
 										}},
 									},
 									},
@@ -1974,8 +1975,4 @@ func TestPortParsing(t *testing.T) {
 	require.Len(t, job.TaskGroups[0].Networks[0].DynamicPorts, 1)
 	require.Equal(t, 9000, job.TaskGroups[0].Networks[0].ReservedPorts[0].Value)
 	require.Equal(t, 0, job.TaskGroups[0].Networks[0].DynamicPorts[0].Value)
-}
-
-func uint32Pointer(v uint32) *uint32 {
-	return &v
 }

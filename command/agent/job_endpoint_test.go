@@ -3875,9 +3875,9 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 								},
 								Remove: []string{"test2"},
 							},
-							MaxConnections:        uint32Pointer(5120),
-							MaxPendingRequests:    uint32Pointer(512),
-							MaxConcurrentRequests: uint32Pointer(2048),
+							MaxConnections:        pointer.Of(uint32(5120)),
+							MaxPendingRequests:    pointer.Of(uint32(512)),
+							MaxConcurrentRequests: pointer.Of(uint32(2048)),
 						}},
 						TLS: &structs.ConsulGatewayTLSConfig{
 							SDS: &structs.ConsulGatewayTLSSDSConfig{
@@ -3930,9 +3930,9 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 									},
 									Remove: []string{"test2"},
 								},
-								MaxConnections:        uint32Pointer(5120),
-								MaxPendingRequests:    uint32Pointer(512),
-								MaxConcurrentRequests: uint32Pointer(2048),
+								MaxConnections:        pointer.Of(uint32(5120)),
+								MaxPendingRequests:    pointer.Of(uint32(512)),
+								MaxConcurrentRequests: pointer.Of(uint32(2048)),
 							}},
 							TLS: &api.ConsulGatewayTLSConfig{
 								SDS: &api.ConsulGatewayTLSSDSConfig{
@@ -3998,8 +3998,4 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 			Native: true,
 		}))
 	})
-}
-
-func uint32Pointer(v uint32) *uint32 {
-	return &v
 }
