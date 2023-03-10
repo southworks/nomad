@@ -553,6 +553,24 @@ func (l *ConsulIngressListener) Copy() *ConsulIngressListener {
 	}
 }
 
+type ConsulIngressServiceConfig struct {
+	MaxConnections        *uint32 `hcl:"max_connections,optional" mapstructure:"max_connections"`
+	MaxPendingRequests    *uint32 `hcl:"max_pending_requests,optional" mapstructure:"max_pending_requests"`
+	MaxConcurrentRequests *uint32 `hcl:"max_concurrent_requests,optional" mapstructure:"max_concurrent_requests"`
+}
+
+func (s *ConsulIngressServiceConfig) Copy() *ConsulIngressServiceConfig {
+	if s == nil {
+		return nil
+	}
+
+	return &ConsulIngressServiceConfig{
+		MaxConnections:        s.MaxConnections,
+		MaxPendingRequests:    s.MaxPendingRequests,
+		MaxConcurrentRequests: s.MaxConcurrentRequests,
+	}
+}
+
 // ConsulIngressConfigEntry represents the Consul Configuration Entry type for
 // an Ingress Gateway.
 //
@@ -561,8 +579,10 @@ type ConsulIngressConfigEntry struct {
 	// Namespace is not yet supported.
 	// Namespace string
 
-	TLS       *ConsulGatewayTLSConfig  `hcl:"tls,block"`
-	Listeners []*ConsulIngressListener `hcl:"listener,block"`
+	TLS       *ConsulGatewayTLSConfig     `hcl:"tls,block"`
+	Listeners []*ConsulIngressListener    `hcl:"listener,block"`
+	Meta      map[string]string           `hcl:"meta,block" mapstructure:"meta"`
+	Defaults  *ConsulIngressServiceConfig `hcl:"defaults,block" mapstructure:"defaults"`
 }
 
 func (e *ConsulIngressConfigEntry) Canonicalize() {
@@ -574,6 +594,10 @@ func (e *ConsulIngressConfigEntry) Canonicalize() {
 
 	if len(e.Listeners) == 0 {
 		e.Listeners = nil
+	}
+
+	if len(e.Meta) == 0 {
+		e.Meta = nil
 	}
 
 	for _, listener := range e.Listeners {
@@ -597,6 +621,8 @@ func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
 	return &ConsulIngressConfigEntry{
 		TLS:       e.TLS.Copy(),
 		Listeners: listeners,
+		Meta:      maps.Clone(e.Meta),
+		Defaults:  e.Defaults.Copy(),
 	}
 }
 

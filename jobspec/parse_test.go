@@ -1648,6 +1648,12 @@ func TestParse(t *testing.T) {
 										}},
 									},
 									},
+									Meta: map[string]string{
+										"testKey": "testValue",
+									},
+									Defaults: &api.ConsulIngressServiceConfig{
+										MaxConnections: pointer.Of(uint32(5120)),
+									},
 								},
 							},
 						},
