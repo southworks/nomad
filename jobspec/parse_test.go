@@ -1385,8 +1385,9 @@ func TestParse(t *testing.T) {
 							Native: false,
 							SidecarService: &api.ConsulSidecarService{
 								Proxy: &api.ConsulProxy{
-									LocalServiceAddress: "10.0.1.2",
-									LocalServicePort:    8080,
+									LocalServiceAddress:    "10.0.1.2",
+									LocalServicePort:       8080,
+									LocalServiceSocketPath: "/run/test.sock",
 									Expose: &api.ConsulExposeConfig{
 										Paths: []*api.ConsulExposePath{{
 											Path:          "/metrics",
@@ -1432,8 +1433,9 @@ func TestParse(t *testing.T) {
 							Native: false,
 							SidecarService: &api.ConsulSidecarService{
 								Proxy: &api.ConsulProxy{
-									LocalServiceAddress: "10.0.1.2",
-									LocalServicePort:    9876,
+									LocalServiceAddress:    "10.0.1.2",
+									LocalServicePort:       9876,
+									LocalServiceSocketPath: "/run/test.sock",
 								},
 							},
 						},
