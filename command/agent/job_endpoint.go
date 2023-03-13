@@ -1678,7 +1678,6 @@ func apiUpstreamsToStructs(in []*api.ConsulUpstream) []structs.ConsulUpstream {
 			DestinationName:      upstream.DestinationName,
 			DestinationNamespace: upstream.DestinationNamespace,
 			DestinationPeer:      upstream.DestinationPeer,
-			DestinationPartition: upstream.DestinationPartition,
 			DestinationType:      structs.UpstreamDestType(upstream.DestinationType),
 			LocalBindPort:        upstream.LocalBindPort,
 			LocalBindSocketPath:  upstream.LocalBindSocketPath,

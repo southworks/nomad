@@ -1471,10 +1471,6 @@ type ConsulUpstream struct {
 	// DestinationPeer the destination service address
 	DestinationPeer string
 
-	// DestinationPartition is used to define the target partition to divide
-	// network traffic into groups
-	DestinationPartition string
-
 	// DestinationType is the type of destination. It can be an IP address,
 	// a DNS hostname, or a service name.
 	DestinationType UpstreamDestType
@@ -1517,8 +1513,6 @@ func (u *ConsulUpstream) Equal(o *ConsulUpstream) bool {
 	case u.DestinationNamespace != o.DestinationNamespace:
 		return false
 	case u.DestinationPeer != o.DestinationPeer:
-		return false
-	case u.DestinationPartition != o.DestinationPartition:
 		return false
 	case u.DestinationType != o.DestinationType:
 		return false

@@ -205,7 +205,6 @@ type ConsulUpstream struct {
 	DestinationName      string             `mapstructure:"destination_name" hcl:"destination_name,optional"`
 	DestinationNamespace string             `mapstructure:"destination_namespace" hcl:"destination_namespace,optional"`
 	DestinationPeer      string             `mapstructure:"destination_peer" hcl:"destination_peer,optional"`
-	DestinationPartition string             `mapstructure:"destination_partition" hcl:"destination_partition,optional"`
 	DestinationType      UpstreamDestType   `mapstructure:"destination_type" hcl:"destination_type,optional"`
 	LocalBindPort        int                `mapstructure:"local_bind_port" hcl:"local_bind_port,optional"`
 	LocalBindSocketPath  string             `mapstructure:"local_bind_socket_path" hcl:"local_bind_socket_path,optional"`
@@ -224,7 +223,6 @@ func (cu *ConsulUpstream) Copy() *ConsulUpstream {
 		DestinationName:      cu.DestinationName,
 		DestinationNamespace: cu.DestinationNamespace,
 		DestinationPeer:      cu.DestinationPeer,
-		DestinationPartition: cu.DestinationPartition,
 		DestinationType:      cu.DestinationType,
 		LocalBindPort:        cu.LocalBindPort,
 		LocalBindSocketPath:  cu.LocalBindSocketPath,

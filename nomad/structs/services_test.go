@@ -737,16 +737,6 @@ func TestConsulUpstream_upstreamEqual(t *testing.T) {
 		must.False(t, upstreamsEquals(a, b))
 	})
 
-	t.Run("different dest partition", func(t *testing.T) {
-		a := []ConsulUpstream{up("foo", 8000)}
-		a[0].DestinationPartition = "partition-1"
-
-		b := []ConsulUpstream{up("foo", 8000)}
-		b[0].DestinationPartition = "partition-2"
-
-		must.False(t, upstreamsEquals(a, b))
-	})
-
 	t.Run("different dest type", func(t *testing.T) {
 		a := []ConsulUpstream{up("foo", 8000)}
 		a[0].DestinationType = "tcp"
@@ -793,12 +783,10 @@ func TestConsulUpstream_upstreamEqual(t *testing.T) {
 		a := []ConsulUpstream{up("foo", 8000), up("bar", 9000)}
 		b := []ConsulUpstream{up("foo", 8000), up("bar", 9000)}
 		a[0].DestinationPeer = "10.0.0.1:6379"
-		a[0].DestinationPartition = "partition-1"
 		a[0].DestinationType = "tcp"
 		a[0].LocalBindSocketPath = "/var/run/mysocket.sock"
 		a[0].LocalBindSocketMode = "0666"
 		b[0].DestinationPeer = "10.0.0.1:6379"
-		b[0].DestinationPartition = "partition-1"
 		b[0].DestinationType = "tcp"
 		b[0].LocalBindSocketPath = "/var/run/mysocket.sock"
 		b[0].LocalBindSocketMode = "0666"
