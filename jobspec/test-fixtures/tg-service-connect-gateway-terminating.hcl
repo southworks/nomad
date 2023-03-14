@@ -39,6 +39,12 @@ job "connect_gateway_terminating" {
               name = "service2"
               sni  = "myhost"
             }
+
+            meta {
+              test-key = "test-value"
+              test-key1 = "test-value1"
+              test-key2 = "test-value2"
+            }
           }
         }
       }

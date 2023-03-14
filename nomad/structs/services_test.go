@@ -897,6 +897,9 @@ var (
 			}, {
 				Name: "linked-service2",
 			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
 		},
 	}
 
@@ -1622,6 +1625,79 @@ func TestConsulLinkedService_linkedServicesEqual(t *testing.T) {
 	require.False(t, linkedServicesEqual(services, different))
 }
 
+func TestConsulTerminatingConfigEntry_Copy(t *testing.T) {
+	ci.Parallel(t)
+
+	t.Run("nil", func(t *testing.T) {
+		new := (*ConsulTerminatingConfigEntry)(nil).Copy()
+		require.Nil(t, new)
+	})
+
+	t.Run("ok", func(t *testing.T) {
+		original := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service1",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
+		}
+		new := original.Copy()
+		require.Equal(t, new, original)
+	})
+}
+
+func TestConsulTerminatingConfigEntry_Equal(t *testing.T) {
+	ci.Parallel(t)
+
+	t.Run("nil", func(t *testing.T) {
+		res := (*ConsulTerminatingConfigEntry)(nil).Equal((*ConsulTerminatingConfigEntry)(nil))
+		require.True(t, res)
+	})
+
+	t.Run("not equal", func(t *testing.T) {
+		original := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service1",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
+		}
+		new := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service2",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value2",
+			},
+		}
+		res := original.Equal(new)
+		require.False(t, res)
+	})
+
+	t.Run("equal", func(t *testing.T) {
+		original := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service1",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
+		}
+		new := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service1",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
+		}
+		res := original.Equal(new)
+		require.True(t, res)
+	})
+}
+
 func TestConsulTerminatingConfigEntry_Validate(t *testing.T) {
 	ci.Parallel(t)
 
@@ -1651,6 +1727,9 @@ func TestConsulTerminatingConfigEntry_Validate(t *testing.T) {
 			Services: []*ConsulLinkedService{{
 				Name: "service1",
 			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
 		}).Validate()
 		require.NoError(t, err)
 	})
