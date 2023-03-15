@@ -1466,6 +1466,8 @@ func (c *ConsulMeshGateway) Validate() error {
 	}
 }
 
+type UpstreamDestType string
+
 // ConsulUpstream represents a Consul Connect upstream jobspec block.
 type ConsulUpstream struct {
 	// DestinationName is the name of the upstream service.
@@ -1473,6 +1475,13 @@ type ConsulUpstream struct {
 
 	// DestinationNamespace is the namespace of the upstream service.
 	DestinationNamespace string
+
+	// DestinationPeer the destination service address
+	DestinationPeer string
+
+	// DestinationType is the type of destination. It can be an IP address,
+	// a DNS hostname, or a service name.
+	DestinationType UpstreamDestType
 
 	// LocalBindPort is the port the proxy will receive connections for the
 	// upstream on.
@@ -1484,6 +1493,13 @@ type ConsulUpstream struct {
 	// LocalBindAddress is the address the proxy will receive connections for the
 	// upstream on.
 	LocalBindAddress string
+
+	// LocalBindSocketPath is the path of the local socket file that will be used
+	// to connect to the destination service
+	LocalBindSocketPath string
+
+	// LocalBindSocketMode defines access permissions to the local socket file
+	LocalBindSocketMode string
 
 	// MeshGateway is the optional configuration of the mesh gateway for this
 	// upstream to use.
@@ -1504,7 +1520,15 @@ func (u *ConsulUpstream) Equal(o *ConsulUpstream) bool {
 		return false
 	case u.DestinationNamespace != o.DestinationNamespace:
 		return false
+	case u.DestinationPeer != o.DestinationPeer:
+		return false
+	case u.DestinationType != o.DestinationType:
+		return false
 	case u.LocalBindPort != o.LocalBindPort:
+		return false
+	case u.LocalBindSocketPath != o.LocalBindSocketPath:
+		return false
+	case u.LocalBindSocketMode != o.LocalBindSocketMode:
 		return false
 	case u.Datacenter != o.Datacenter:
 		return false
