@@ -1727,6 +1727,11 @@ func TestParse(t *testing.T) {
 										Name: "service2",
 										SNI:  "myhost",
 									}},
+									Meta: map[string]string{
+										"test-key":  "test-value",
+										"test-key1": "test-value1",
+										"test-key2": "test-value2",
+									},
 								},
 							},
 						},

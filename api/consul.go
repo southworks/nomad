@@ -678,6 +678,7 @@ type ConsulTerminatingConfigEntry struct {
 	// Namespace string
 
 	Services []*ConsulLinkedService `hcl:"service,block"`
+	Meta     map[string]string      `hcl:"meta,block"`
 }
 
 func (e *ConsulTerminatingConfigEntry) Canonicalize() {
@@ -687,6 +688,10 @@ func (e *ConsulTerminatingConfigEntry) Canonicalize() {
 
 	if len(e.Services) == 0 {
 		e.Services = nil
+	}
+
+	if len(e.Meta) == 0 {
+		e.Meta = nil
 	}
 
 	for _, service := range e.Services {
@@ -709,6 +714,7 @@ func (e *ConsulTerminatingConfigEntry) Copy() *ConsulTerminatingConfigEntry {
 
 	return &ConsulTerminatingConfigEntry{
 		Services: services,
+		Meta:     maps.Clone(e.Meta),
 	}
 }
 

@@ -3994,6 +3994,9 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 						KeyFile:  "key.pem",
 						SNI:      "linked.consul",
 					}},
+					Meta: map[string]string{
+						"test-key": "test-value",
+					},
 				},
 			},
 		}, ApiConsulConnectToStructs(&api.ConsulConnect{
@@ -4006,6 +4009,9 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 						KeyFile:  "key.pem",
 						SNI:      "linked.consul",
 					}},
+					Meta: map[string]string{
+						"test-key": "test-value",
+					},
 				},
 			},
 		}))
