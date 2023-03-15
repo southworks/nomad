@@ -1660,8 +1660,9 @@ func TestParse(t *testing.T) {
 										CertFile: "cert.pem",
 										KeyFile:  "key.pem",
 									}, {
-										Name: "service2",
-										SNI:  "myhost",
+										Name:      "service2",
+										SNI:       "myhost",
+										Namespace: "ns1",
 									}},
 								},
 							},

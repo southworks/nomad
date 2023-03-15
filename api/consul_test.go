@@ -437,11 +437,12 @@ func TestConsulTerminatingConfigEntry_Copy(t *testing.T) {
 		Services: []*ConsulLinkedService{{
 			Name: "servic1",
 		}, {
-			Name:     "service2",
-			CAFile:   "ca_file.pem",
-			CertFile: "cert_file.pem",
-			KeyFile:  "key_file.pem",
-			SNI:      "sni.terminating.consul",
+			Name:      "service2",
+			CAFile:    "ca_file.pem",
+			CertFile:  "cert_file.pem",
+			KeyFile:   "key_file.pem",
+			SNI:       "sni.terminating.consul",
+			Namespace: "ns1",
 		}},
 	}
 

@@ -38,6 +38,7 @@ job "connect_gateway_terminating" {
             service {
               name = "service2"
               sni  = "myhost"
+							namespace = "ns1"
             }
           }
         }
