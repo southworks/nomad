@@ -2063,11 +2063,12 @@ func ingressListenersEqual(a, b []*ConsulIngressListener) bool {
 }
 
 type ConsulLinkedService struct {
-	Name     string
-	CAFile   string
-	CertFile string
-	KeyFile  string
-	SNI      string
+	Name      string
+	CAFile    string
+	CertFile  string
+	KeyFile   string
+	SNI       string
+	Namespace string
 }
 
 func (s *ConsulLinkedService) Copy() *ConsulLinkedService {
@@ -2076,11 +2077,12 @@ func (s *ConsulLinkedService) Copy() *ConsulLinkedService {
 	}
 
 	return &ConsulLinkedService{
-		Name:     s.Name,
-		CAFile:   s.CAFile,
-		CertFile: s.CertFile,
-		KeyFile:  s.KeyFile,
-		SNI:      s.SNI,
+		Name:      s.Name,
+		CAFile:    s.CAFile,
+		CertFile:  s.CertFile,
+		KeyFile:   s.KeyFile,
+		SNI:       s.SNI,
+		Namespace: s.Namespace,
 	}
 }
 
@@ -2099,6 +2101,8 @@ func (s *ConsulLinkedService) Equal(o *ConsulLinkedService) bool {
 	case s.KeyFile != o.KeyFile:
 		return false
 	case s.SNI != o.SNI:
+		return false
+	case s.Namespace != o.Namespace:
 		return false
 	}
 
