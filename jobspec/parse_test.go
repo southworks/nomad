@@ -1349,6 +1349,31 @@ func TestParse(t *testing.T) {
 			false,
 		},
 		{
+			"tg-service-connect-sidecar_meta.hcl",
+			&api.Job{
+				ID:   stringToPtr("sidecar_disablecheck"),
+				Name: stringToPtr("sidecar_disablecheck"),
+				Type: stringToPtr("service"),
+				TaskGroups: []*api.TaskGroup{{
+					Name: stringToPtr("group"),
+					Services: []*api.Service{{
+						Name: "example",
+						Connect: &api.ConsulConnect{
+							Native: false,
+							SidecarService: &api.ConsulSidecarService{
+								Meta: map[string]string{
+									"test-key":  "test-value",
+									"test-key1": "test-value1",
+									"test-key2": "test-value2",
+								},
+							},
+						},
+					}},
+				}},
+			},
+			false,
+		},
+		{
 			"tg-service-connect-resources.hcl",
 			&api.Job{
 				ID:   stringToPtr("sidecar_task_resources"),

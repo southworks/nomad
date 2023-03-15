@@ -391,6 +391,9 @@ func TestService_Hash(t *testing.T) {
 						Config:               map[string]any{"foo": "bar"},
 					}},
 				},
+				Meta: map[string]string{
+					"test-key": "test-value",
+				},
 			},
 			// SidecarTask: nil // not hashed
 		}}
@@ -535,6 +538,9 @@ func TestConsulConnect_CopyEqual(t *testing.T) {
 				Config: map[string]interface{}{
 					"foo": 1,
 				},
+			},
+			Meta: map[string]string{
+				"test-key": "test-value",
 			},
 		},
 	}
@@ -843,12 +849,18 @@ func TestConsulSidecarService_Copy(t *testing.T) {
 			Tags:  []string{"foo", "bar"},
 			Port:  "port1",
 			Proxy: &ConsulProxy{LocalServiceAddress: "10.0.0.1"},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
 		}
 		result := s.Copy()
 		require.Equal(t, &ConsulSidecarService{
 			Tags:  []string{"foo", "bar"},
 			Port:  "port1",
 			Proxy: &ConsulProxy{LocalServiceAddress: "10.0.0.1"},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
 		}, result)
 	})
 }

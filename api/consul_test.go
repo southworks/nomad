@@ -108,6 +108,9 @@ func TestConsulSidecarService_Canonicalize(t *testing.T) {
 				LocalServicePort:       80,
 				LocalServiceSocketPath: "/run/test.sock",
 			},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
 		}
 		css.Canonicalize()
 		must.Eq(t, &ConsulSidecarService{
@@ -117,6 +120,9 @@ func TestConsulSidecarService_Canonicalize(t *testing.T) {
 				LocalServiceAddress:    "lsa",
 				LocalServicePort:       80,
 				LocalServiceSocketPath: "/run/test.sock",
+			},
+			Meta: map[string]string{
+				"test-key": "test-value",
 			},
 		}, css)
 	})
