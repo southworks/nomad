@@ -568,6 +568,7 @@ func parseConsulLinkedService(o *ast.ObjectItem) (*api.ConsulLinkedService, erro
 		"cert_file",
 		"key_file",
 		"sni",
+		"namespace",
 	}
 
 	if err := checkHCLKeys(o.Val, valid); err != nil {

@@ -1667,11 +1667,12 @@ func apiConnectTerminatingServiceToStructs(in *api.ConsulLinkedService) *structs
 	}
 
 	return &structs.ConsulLinkedService{
-		Name:     in.Name,
-		CAFile:   in.CAFile,
-		CertFile: in.CertFile,
-		KeyFile:  in.KeyFile,
-		SNI:      in.SNI,
+		Name:      in.Name,
+		CAFile:    in.CAFile,
+		CertFile:  in.CertFile,
+		KeyFile:   in.KeyFile,
+		SNI:       in.SNI,
+		Namespace: in.Namespace,
 	}
 }
 
