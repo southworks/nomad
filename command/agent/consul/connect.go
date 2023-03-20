@@ -199,9 +199,13 @@ func connectUpstreams(in []structs.ConsulUpstream) []api.Upstream {
 		upstreams[i] = api.Upstream{
 			DestinationName:      upstream.DestinationName,
 			DestinationNamespace: upstream.DestinationNamespace,
+			DestinationType:      api.UpstreamDestType(upstream.DestinationType),
+			DestinationPeer:      upstream.DestinationPeer,
 			LocalBindPort:        upstream.LocalBindPort,
 			Datacenter:           upstream.Datacenter,
 			LocalBindAddress:     upstream.LocalBindAddress,
+			LocalBindSocketPath:  upstream.LocalBindSocketPath,
+			LocalBindSocketMode:  upstream.LocalBindSocketMode,
 			MeshGateway:          connectMeshGateway(upstream.MeshGateway),
 			Config:               maps.Clone(upstream.Config),
 		}
