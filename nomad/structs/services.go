@@ -2140,6 +2140,10 @@ func linkedServicesEqual(a, b []*ConsulLinkedService) bool {
 
 type ConsulTerminatingConfigEntry struct {
 	Services []*ConsulLinkedService
+
+	// Partition is the partition the config entry is associated with.
+	// Partitioning is a Consul Enterprise feature.
+	Partition string `json:",omitempty"`
 }
 
 func (e *ConsulTerminatingConfigEntry) Copy() *ConsulTerminatingConfigEntry {
@@ -2156,13 +2160,18 @@ func (e *ConsulTerminatingConfigEntry) Copy() *ConsulTerminatingConfigEntry {
 	}
 
 	return &ConsulTerminatingConfigEntry{
-		Services: services,
+		Services:  services,
+		Partition: e.Partition,
 	}
 }
 
 func (e *ConsulTerminatingConfigEntry) Equal(o *ConsulTerminatingConfigEntry) bool {
 	if e == nil || o == nil {
 		return e == o
+	}
+
+	if e.Partition != o.Partition {
+		return false
 	}
 
 	return linkedServicesEqual(e.Services, o.Services)

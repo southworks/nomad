@@ -567,7 +567,8 @@ type ConsulTerminatingConfigEntry struct {
 	// Namespace is not yet supported.
 	// Namespace string
 
-	Services []*ConsulLinkedService `hcl:"service,block"`
+	Services  []*ConsulLinkedService `hcl:"service,block"`
+	Partition string                 `hcl:"partition,optional" mapstructure:"partition"`
 }
 
 func (e *ConsulTerminatingConfigEntry) Canonicalize() {
@@ -598,7 +599,8 @@ func (e *ConsulTerminatingConfigEntry) Copy() *ConsulTerminatingConfigEntry {
 	}
 
 	return &ConsulTerminatingConfigEntry{
-		Services: services,
+		Services:  services,
+		Partition: e.Partition,
 	}
 }
 

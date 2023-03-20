@@ -1599,7 +1599,8 @@ func apiConnectTerminatingGatewayToStructs(in *api.ConsulTerminatingConfigEntry)
 	}
 
 	return &structs.ConsulTerminatingConfigEntry{
-		Services: apiConnectTerminatingServicesToStructs(in.Services),
+		Services:  apiConnectTerminatingServicesToStructs(in.Services),
+		Partition: in.Partition,
 	}
 }
 
