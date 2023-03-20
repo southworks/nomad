@@ -577,29 +577,45 @@ func (c *consulConfigsAPI) setCE(ctx context.Context, entry api.ConfigEntry) err
 	return err
 }
 
+func convertGatewayTLSConfig(tls *structs.ConsulGatewayTLSConfig) *api.GatewayTLSConfig {
+	return &api.GatewayTLSConfig{
+		Enabled:       tls.Enabled,
+		TLSMinVersion: tls.TLSMinVersion,
+		TLSMaxVersion: tls.TLSMaxVersion,
+		CipherSuites:  slices.Clone(tls.CipherSuites),
+		SDS:           (*api.GatewayTLSSDSConfig)(tls.SDS.Copy()),
+	}
+}
+
 func convertIngressCE(namespace, service string, entry *structs.ConsulIngressConfigEntry) api.ConfigEntry {
 	var listeners []api.IngressListener = nil
 	for _, listener := range entry.Listeners {
 		var services []api.IngressService = nil
 		for _, s := range listener.Services {
 			services = append(services, api.IngressService{
-				Name:  s.Name,
-				Hosts: slices.Clone(s.Hosts),
+				Name:                  s.Name,
+				Hosts:                 slices.Clone(s.Hosts),
+				RequestHeaders:        (*api.HTTPHeaderModifiers)(s.RequestHeaders.Copy()),
+				ResponseHeaders:       (*api.HTTPHeaderModifiers)(s.ResponseHeaders.Copy()),
+				MaxConnections:        s.MaxConnections,
+				MaxPendingRequests:    s.MaxPendingRequests,
+				MaxConcurrentRequests: s.MaxConcurrentRequests,
+				TLS: &api.GatewayServiceTLSConfig{
+					SDS: (*api.GatewayTLSSDSConfig)(s.TLS.SDS.Copy()),
+				},
 			})
 		}
 		listeners = append(listeners, api.IngressListener{
 			Port:     listener.Port,
 			Protocol: listener.Protocol,
 			Services: services,
+			TLS:      convertGatewayTLSConfig(listener.TLS),
 		})
 	}
 
 	tls := api.GatewayTLSConfig{}
 	if entry.TLS != nil {
-		tls.Enabled = entry.TLS.Enabled
-		tls.TLSMinVersion = entry.TLS.TLSMinVersion
-		tls.TLSMaxVersion = entry.TLS.TLSMaxVersion
-		tls.CipherSuites = slices.Clone(entry.TLS.CipherSuites)
+		tls = *convertGatewayTLSConfig(entry.TLS)
 	}
 
 	return &api.IngressGatewayConfigEntry{
@@ -608,6 +624,8 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 		Name:      service,
 		TLS:       tls,
 		Listeners: listeners,
+		Defaults:  (*api.IngressServiceConfig)(entry.Defaults.Copy()),
+		Meta:      maps.Clone(entry.Meta),
 	}
 }
 

@@ -129,6 +129,7 @@ func connectSidecarRegistration(serviceID string, info structs.AllocInfo, css *s
 		Address: cMapping.HostIP,
 		Proxy:   proxy,
 		Checks:  checks,
+		Meta:    maps.Clone(css.Meta),
 	}, nil
 }
 
@@ -143,11 +144,12 @@ func connectSidecarProxy(info structs.AllocInfo, proxy *structs.ConsulProxy, cPo
 	}
 
 	return &api.AgentServiceConnectProxyConfig{
-		LocalServiceAddress: proxy.LocalServiceAddress,
-		LocalServicePort:    proxy.LocalServicePort,
-		Config:              connectProxyConfig(proxy.Config, cPort, info),
-		Upstreams:           connectUpstreams(proxy.Upstreams),
-		Expose:              expose,
+		LocalServiceAddress:    proxy.LocalServiceAddress,
+		LocalServicePort:       proxy.LocalServicePort,
+		LocalServiceSocketPath: proxy.LocalServiceSocketPath,
+		Config:                 connectProxyConfig(proxy.Config, cPort, info),
+		Upstreams:              connectUpstreams(proxy.Upstreams),
+		Expose:                 expose,
 	}, nil
 }
 
@@ -162,7 +164,7 @@ func connectProxyExpose(expose *structs.ConsulExposeConfig, networks structs.Net
 	}
 
 	return api.ExposeConfig{
-		Checks: false,
+		Checks: expose.Checks,
 		Paths:  paths,
 	}, nil
 }
@@ -199,9 +201,13 @@ func connectUpstreams(in []structs.ConsulUpstream) []api.Upstream {
 		upstreams[i] = api.Upstream{
 			DestinationName:      upstream.DestinationName,
 			DestinationNamespace: upstream.DestinationNamespace,
+			DestinationType:      api.UpstreamDestType(upstream.DestinationType),
+			DestinationPeer:      upstream.DestinationPeer,
 			LocalBindPort:        upstream.LocalBindPort,
 			Datacenter:           upstream.Datacenter,
 			LocalBindAddress:     upstream.LocalBindAddress,
+			LocalBindSocketPath:  upstream.LocalBindSocketPath,
+			LocalBindSocketMode:  upstream.LocalBindSocketMode,
 			MeshGateway:          connectMeshGateway(upstream.MeshGateway),
 			Config:               maps.Clone(upstream.Config),
 		}
