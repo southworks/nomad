@@ -200,6 +200,7 @@ func (c *ConsulMeshGateway) Copy() *ConsulMeshGateway {
 
 // ConsulUpstream represents a Consul Connect upstream jobspec block.
 type ConsulUpstream struct {
+	DestinationPartition string             `mapstructure:"destination_partition" hcl:"destination_partition,optional"`
 	DestinationName      string             `mapstructure:"destination_name" hcl:"destination_name,optional"`
 	DestinationNamespace string             `mapstructure:"destination_namespace" hcl:"destination_namespace,optional"`
 	LocalBindPort        int                `mapstructure:"local_bind_port" hcl:"local_bind_port,optional"`
@@ -214,6 +215,7 @@ func (cu *ConsulUpstream) Copy() *ConsulUpstream {
 		return nil
 	}
 	return &ConsulUpstream{
+		DestinationPartition: cu.DestinationPartition,
 		DestinationName:      cu.DestinationName,
 		DestinationNamespace: cu.DestinationNamespace,
 		LocalBindPort:        cu.LocalBindPort,

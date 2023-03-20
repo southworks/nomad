@@ -1452,6 +1452,10 @@ func (c *ConsulMeshGateway) Validate() error {
 
 // ConsulUpstream represents a Consul Connect upstream jobspec block.
 type ConsulUpstream struct {
+	// DestinationPartition is used to define the target partition to divide
+	// network traffic into groups
+	DestinationPartition string
+
 	// DestinationName is the name of the upstream service.
 	DestinationName string
 
@@ -1484,6 +1488,8 @@ func (u *ConsulUpstream) Equal(o *ConsulUpstream) bool {
 		return u == o
 	}
 	switch {
+	case u.DestinationPartition != o.DestinationPartition:
+		return false
 	case u.DestinationName != o.DestinationName:
 		return false
 	case u.DestinationNamespace != o.DestinationNamespace:
