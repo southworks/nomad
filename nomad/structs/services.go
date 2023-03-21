@@ -2005,6 +2005,9 @@ func ingressServicesEqual(a, b []*ConsulIngressService) bool {
 //
 // https://www.consul.io/docs/agent/config-entries/ingress-gateway#available-fields
 type ConsulIngressConfigEntry struct {
+	// Partition is the partition the IngressGateway is associated with.
+	// Partitioning is a Consul Enterprise feature.
+	Partition string `json:",omitempty"`
 	TLS       *ConsulGatewayTLSConfig
 	Listeners []*ConsulIngressListener
 }
@@ -2023,6 +2026,7 @@ func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
 	}
 
 	return &ConsulIngressConfigEntry{
+		Partition: e.Partition,
 		TLS:       e.TLS.Copy(),
 		Listeners: listeners,
 	}
@@ -2034,6 +2038,10 @@ func (e *ConsulIngressConfigEntry) Equal(o *ConsulIngressConfigEntry) bool {
 	}
 
 	if !e.TLS.Equal(o.TLS) {
+		return false
+	}
+
+	if e.Partition != o.Partition {
 		return false
 	}
 

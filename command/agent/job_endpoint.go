@@ -1528,6 +1528,7 @@ func apiConnectIngressGatewayToStructs(in *api.ConsulIngressConfigEntry) *struct
 	}
 
 	return &structs.ConsulIngressConfigEntry{
+		Partition: in.Partition,
 		TLS:       apiConnectGatewayTLSConfig(in.TLS),
 		Listeners: apiConnectIngressListenersToStructs(in.Listeners),
 	}

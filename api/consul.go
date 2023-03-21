@@ -494,6 +494,7 @@ type ConsulIngressConfigEntry struct {
 	// Namespace is not yet supported.
 	// Namespace string
 
+	Partition string                   `mapstructure:"partition" hcl:"partition,optional"`
 	TLS       *ConsulGatewayTLSConfig  `hcl:"tls,block"`
 	Listeners []*ConsulIngressListener `hcl:"listener,block"`
 }
@@ -528,6 +529,7 @@ func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
 	}
 
 	return &ConsulIngressConfigEntry{
+		Partition: e.Partition,
 		TLS:       e.TLS.Copy(),
 		Listeners: listeners,
 	}
