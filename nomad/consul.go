@@ -590,6 +590,13 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 			Port:     listener.Port,
 			Protocol: listener.Protocol,
 			Services: services,
+			TLS: &api.GatewayTLSConfig{
+				Enabled:       listener.TLS.Enabled,
+				TLSMinVersion: listener.TLS.TLSMinVersion,
+				TLSMaxVersion: listener.TLS.TLSMaxVersion,
+				CipherSuites:  slices.Clone(listener.TLS.CipherSuites),
+				SDS:           (*api.GatewayTLSSDSConfig)(listener.TLS.SDS.Copy()),
+			},
 		})
 	}
 
@@ -599,6 +606,7 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 		tls.TLSMinVersion = entry.TLS.TLSMinVersion
 		tls.TLSMaxVersion = entry.TLS.TLSMaxVersion
 		tls.CipherSuites = slices.Clone(entry.TLS.CipherSuites)
+		tls.SDS = (*api.GatewayTLSSDSConfig)(entry.TLS.SDS.Copy())
 	}
 
 	return &api.IngressGatewayConfigEntry{
