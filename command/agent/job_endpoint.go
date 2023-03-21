@@ -1591,6 +1591,7 @@ func apiConnectIngressServiceToStructs(in *api.ConsulIngressService) *structs.Co
 	return &structs.ConsulIngressService{
 		Name:  in.Name,
 		Hosts: slices.Clone(in.Hosts),
+		Partition: in.Partition,
 	}
 }
 

@@ -1864,6 +1864,9 @@ func (c *ConsulGatewayTLSConfig) Equal(o *ConsulGatewayTLSConfig) bool {
 type ConsulIngressService struct {
 	Name  string
 	Hosts []string
+	// Partition is the partition where the service is located.
+	// Partitioning is a Consul Enterprise feature.
+	Partition string `json:",omitempty"`
 }
 
 func (s *ConsulIngressService) Copy() *ConsulIngressService {
@@ -1880,6 +1883,7 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 	return &ConsulIngressService{
 		Name:  s.Name,
 		Hosts: hosts,
+		Partition: s.Partition,
 	}
 }
 
@@ -1889,6 +1893,10 @@ func (s *ConsulIngressService) Equal(o *ConsulIngressService) bool {
 	}
 
 	if s.Name != o.Name {
+		return false
+	}
+
+	if s.Partition != o.Partition {
 		return false
 	}
 

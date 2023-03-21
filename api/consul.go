@@ -410,6 +410,8 @@ type ConsulIngressService struct {
 	Name string `hcl:"name,optional"`
 
 	Hosts []string `hcl:"hosts,optional"`
+
+	Partition string `mapstructure:"partition" hcl:"partition,optional"`
 }
 
 func (s *ConsulIngressService) Canonicalize() {
@@ -436,6 +438,7 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 	return &ConsulIngressService{
 		Name:  s.Name,
 		Hosts: hosts,
+		Partition: s.Partition,
 	}
 }
 
