@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/nomad/command/agent/consul"
 	"github.com/hashicorp/nomad/helper"
 	"github.com/hashicorp/nomad/nomad/structs"
+	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/time/rate"
@@ -623,6 +624,8 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 		Name:      service,
 		TLS:       tls,
 		Listeners: listeners,
+		Defaults:  (*api.IngressServiceConfig)(entry.Defaults.Copy()),
+		Meta:      maps.Clone(entry.Meta),
 	}
 }
 
