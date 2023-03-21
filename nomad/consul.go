@@ -582,8 +582,16 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 		var services []api.IngressService = nil
 		for _, s := range listener.Services {
 			services = append(services, api.IngressService{
-				Name:  s.Name,
-				Hosts: slices.Clone(s.Hosts),
+				Name:                  s.Name,
+				Hosts:                 slices.Clone(s.Hosts),
+				RequestHeaders:        (*api.HTTPHeaderModifiers)(s.RequestHeaders.Copy()),
+				ResponseHeaders:       (*api.HTTPHeaderModifiers)(s.ResponseHeaders.Copy()),
+				MaxConnections:        s.MaxConnections,
+				MaxPendingRequests:    s.MaxPendingRequests,
+				MaxConcurrentRequests: s.MaxConcurrentRequests,
+				TLS: &api.GatewayServiceTLSConfig{
+					SDS: (*api.GatewayTLSSDSConfig)(s.TLS.SDS.Copy()),
+				},
 			})
 		}
 		listeners = append(listeners, api.IngressListener{
