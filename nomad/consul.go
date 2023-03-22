@@ -585,13 +585,13 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 			services = append(services, api.IngressService{
 				Name:                  s.Name,
 				Hosts:                 slices.Clone(s.Hosts),
-				RequestHeaders:        (*api.HTTPHeaderModifiers)(s.RequestHeaders.Copy()),
-				ResponseHeaders:       (*api.HTTPHeaderModifiers)(s.ResponseHeaders.Copy()),
+				RequestHeaders:        convertHTTPHeaderModifiers(s.RequestHeaders),
+				ResponseHeaders:       convertHTTPHeaderModifiers(s.ResponseHeaders),
 				MaxConnections:        s.MaxConnections,
 				MaxPendingRequests:    s.MaxPendingRequests,
 				MaxConcurrentRequests: s.MaxConcurrentRequests,
 				TLS: &api.GatewayServiceTLSConfig{
-					SDS: (*api.GatewayTLSSDSConfig)(s.TLS.SDS.Copy()),
+					SDS: convertGatawayTLSSDSConfig(s.TLS.SDS),
 				},
 			})
 		}
@@ -599,33 +599,55 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 			Port:     listener.Port,
 			Protocol: listener.Protocol,
 			Services: services,
-			TLS: &api.GatewayTLSConfig{
-				Enabled:       listener.TLS.Enabled,
-				TLSMinVersion: listener.TLS.TLSMinVersion,
-				TLSMaxVersion: listener.TLS.TLSMaxVersion,
-				CipherSuites:  slices.Clone(listener.TLS.CipherSuites),
-				SDS:           (*api.GatewayTLSSDSConfig)(listener.TLS.SDS.Copy()),
-			},
+			TLS:      convertGatawayTLSConfig(listener.TLS),
 		})
-	}
-
-	tls := api.GatewayTLSConfig{}
-	if entry.TLS != nil {
-		tls.Enabled = entry.TLS.Enabled
-		tls.TLSMinVersion = entry.TLS.TLSMinVersion
-		tls.TLSMaxVersion = entry.TLS.TLSMaxVersion
-		tls.CipherSuites = slices.Clone(entry.TLS.CipherSuites)
-		tls.SDS = (*api.GatewayTLSSDSConfig)(entry.TLS.SDS.Copy())
 	}
 
 	return &api.IngressGatewayConfigEntry{
 		Namespace: namespace,
 		Kind:      api.IngressGateway,
 		Name:      service,
-		TLS:       tls,
+		TLS:       *convertGatawayTLSConfig(entry.TLS),
 		Listeners: listeners,
 		Defaults:  (*api.IngressServiceConfig)(entry.Defaults.Copy()),
 		Meta:      maps.Clone(entry.Meta),
+	}
+}
+
+func convertHTTPHeaderModifiers(in *structs.ConsulHTTPHeaderModifiers) *api.HTTPHeaderModifiers {
+	if in != nil {
+		return &api.HTTPHeaderModifiers{
+			Add:    maps.Clone(in.Add),
+			Set:    maps.Clone(in.Set),
+			Remove: slices.Clone(in.Remove),
+		}
+	} else {
+		return &api.HTTPHeaderModifiers{}
+	}
+}
+
+func convertGatawayTLSConfig(in *structs.ConsulGatewayTLSConfig) *api.GatewayTLSConfig {
+	if in != nil {
+		return &api.GatewayTLSConfig{
+			Enabled:       in.Enabled,
+			TLSMinVersion: in.TLSMinVersion,
+			TLSMaxVersion: in.TLSMaxVersion,
+			CipherSuites:  slices.Clone(in.CipherSuites),
+			SDS:           convertGatawayTLSSDSConfig(in.SDS),
+		}
+	} else {
+		return &api.GatewayTLSConfig{}
+	}
+}
+
+func convertGatawayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.GatewayTLSSDSConfig {
+	if in != nil {
+		return &api.GatewayTLSSDSConfig{
+			ClusterName:  in.ClusterName,
+			CertResource: in.CertResource,
+		}
+	} else {
+		return &api.GatewayTLSSDSConfig{}
 	}
 }
 
