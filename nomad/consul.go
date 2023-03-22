@@ -590,7 +590,7 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 			Port:     listener.Port,
 			Protocol: listener.Protocol,
 			Services: services,
-			TLS:      convertGatawayTLSConfig(listener.TLS),
+			TLS:      convertGatewayTLSConfig(listener.TLS),
 		})
 	}
 
@@ -598,26 +598,26 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 		Namespace: namespace,
 		Kind:      api.IngressGateway,
 		Name:      service,
-		TLS:       *convertGatawayTLSConfig(entry.TLS),
+		TLS:       *convertGatewayTLSConfig(entry.TLS),
 		Listeners: listeners,
 	}
 }
 
-func convertGatawayTLSConfig(in *structs.ConsulGatewayTLSConfig) *api.GatewayTLSConfig {
+func convertGatewayTLSConfig(in *structs.ConsulGatewayTLSConfig) *api.GatewayTLSConfig {
 	if in != nil {
 		return &api.GatewayTLSConfig{
 			Enabled:       in.Enabled,
 			TLSMinVersion: in.TLSMinVersion,
 			TLSMaxVersion: in.TLSMaxVersion,
 			CipherSuites:  slices.Clone(in.CipherSuites),
-			SDS:           convertGatawayTLSSDSConfig(in.SDS),
+			SDS:           convertGatewayTLSSDSConfig(in.SDS),
 		}
 	} else {
 		return &api.GatewayTLSConfig{}
 	}
 }
 
-func convertGatawayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.GatewayTLSSDSConfig {
+func convertGatewayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.GatewayTLSSDSConfig {
 	return &api.GatewayTLSSDSConfig{
 		ClusterName:  in.ClusterName,
 		CertResource: in.CertResource,
