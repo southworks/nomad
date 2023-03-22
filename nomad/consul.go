@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/nomad/command/agent/consul"
 	"github.com/hashicorp/nomad/helper"
 	"github.com/hashicorp/nomad/nomad/structs"
+	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/time/rate"
@@ -584,13 +585,13 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 			services = append(services, api.IngressService{
 				Name:                  s.Name,
 				Hosts:                 slices.Clone(s.Hosts),
-				RequestHeaders:        (*api.HTTPHeaderModifiers)(s.RequestHeaders.Copy()),
-				ResponseHeaders:       (*api.HTTPHeaderModifiers)(s.ResponseHeaders.Copy()),
+				RequestHeaders:        convertHTTPHeaderModifiers(s.RequestHeaders),
+				ResponseHeaders:       convertHTTPHeaderModifiers(s.ResponseHeaders),
 				MaxConnections:        s.MaxConnections,
 				MaxPendingRequests:    s.MaxPendingRequests,
 				MaxConcurrentRequests: s.MaxConcurrentRequests,
 				TLS: &api.GatewayServiceTLSConfig{
-					SDS: (*api.GatewayTLSSDSConfig)(s.TLS.SDS.Copy()),
+					SDS: convertGatawayTLSSDSConfig(s.TLS.SDS),
 				},
 			})
 		}
@@ -611,6 +612,18 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 	}
 }
 
+func convertHTTPHeaderModifiers(in *structs.ConsulHTTPHeaderModifiers) *api.HTTPHeaderModifiers {
+	if in != nil {
+		return &api.HTTPHeaderModifiers{
+			Add:    maps.Clone(in.Add),
+			Set:    maps.Clone(in.Set),
+			Remove: slices.Clone(in.Remove),
+		}
+	} else {
+		return &api.HTTPHeaderModifiers{}
+	}
+}
+
 func convertGatawayTLSConfig(in *structs.ConsulGatewayTLSConfig) *api.GatewayTLSConfig {
 	if in != nil {
 		return &api.GatewayTLSConfig{
@@ -626,9 +639,13 @@ func convertGatawayTLSConfig(in *structs.ConsulGatewayTLSConfig) *api.GatewayTLS
 }
 
 func convertGatawayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.GatewayTLSSDSConfig {
-	return &api.GatewayTLSSDSConfig{
-		ClusterName:  in.ClusterName,
-		CertResource: in.CertResource,
+	if in != nil {
+		return &api.GatewayTLSSDSConfig{
+			ClusterName:  in.ClusterName,
+			CertResource: in.CertResource,
+		}
+	} else {
+		return &api.GatewayTLSSDSConfig{}
 	}
 }
 
