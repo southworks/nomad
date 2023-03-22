@@ -869,6 +869,7 @@ var (
 			},
 		},
 		Ingress: &ConsulIngressConfigEntry{
+			Partition: "partition-1",
 			TLS: &ConsulGatewayTLSConfig{
 				Enabled: true,
 			},
@@ -878,15 +879,18 @@ var (
 				Services: []*ConsulIngressService{{
 					Name:  "service1",
 					Hosts: []string{"10.0.0.1", "10.0.0.1:3000"},
+					Partition: "partition-1",
 				}, {
 					Name:  "service2",
 					Hosts: []string{"10.0.0.2", "10.0.0.2:3000"},
+					Partition: "partition-1",
 				}},
 			}, {
 				Port:     3001,
 				Protocol: "tcp",
 				Services: []*ConsulIngressService{{
 					Name: "service3",
+					Partition: "partition-1",
 				}},
 			}},
 		},
@@ -899,6 +903,7 @@ var (
 			EnvoyGatewayBindAddresses: nil,
 		},
 		Terminating: &ConsulTerminatingConfigEntry{
+			Partition: "partition-1",
 			Services: []*ConsulLinkedService{{
 				Name:     "linked-service1",
 				CAFile:   "ca.pem",
@@ -1140,9 +1145,11 @@ func TestConsulGateway_ingressServicesEqual(t *testing.T) {
 	igs1 := []*ConsulIngressService{{
 		Name:  "service1",
 		Hosts: []string{"host1", "host2"},
+		Partition: "partition-1",
 	}, {
 		Name:  "service2",
 		Hosts: []string{"host3"},
+		Partition: "partition-1",
 	}}
 
 	require.False(t, ingressServicesEqual(igs1, nil))
@@ -1157,9 +1164,11 @@ func TestConsulGateway_ingressServicesEqual(t *testing.T) {
 	hostOrder := []*ConsulIngressService{{
 		Name:  "service1",
 		Hosts: []string{"host2", "host1"}, // hosts reversed
+		Partition: "partition-1",
 	}, {
 		Name:  "service2",
 		Hosts: []string{"host3"},
+		Partition: "partition-1",
 	}}
 
 	require.True(t, ingressServicesEqual(igs1, hostOrder))
@@ -1174,12 +1183,14 @@ func TestConsulGateway_ingressListenersEqual(t *testing.T) {
 		Services: []*ConsulIngressService{{
 			Name:  "service1",
 			Hosts: []string{"host1", "host2"},
+			Partition: "partition-1",
 		}},
 	}, {
 		Port:     2001,
 		Protocol: "tcp",
 		Services: []*ConsulIngressService{{
 			Name: "service2",
+			Partition: "partition-1",
 		}},
 	}}
 
