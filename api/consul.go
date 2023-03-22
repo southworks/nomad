@@ -3,6 +3,7 @@ package api
 import (
 	"time"
 
+	"github.com/hashicorp/nomad/helper/pointer"
 	"golang.org/x/exp/maps"
 )
 
@@ -484,22 +485,33 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 		return nil
 	}
 
+	ns := new(ConsulIngressService)
+	*ns = *s
+
 	var hosts []string = nil
 	if n := len(s.Hosts); n > 0 {
 		hosts = make([]string, n)
 		copy(hosts, s.Hosts)
 	}
 
-	return &ConsulIngressService{
-		Name:                  s.Name,
-		Hosts:                 hosts,
-		TLS:                   s.TLS.Copy(),
-		RequestHeaders:        s.RequestHeaders.Copy(),
-		ResponseHeaders:       s.ResponseHeaders.Copy(),
-		MaxConnections:        s.MaxConnections,
-		MaxPendingRequests:    s.MaxPendingRequests,
-		MaxConcurrentRequests: s.MaxConcurrentRequests,
+	ns.Name = s.Name
+	ns.Hosts = hosts
+	ns.RequestHeaders = s.RequestHeaders.Copy()
+	ns.ResponseHeaders = s.ResponseHeaders.Copy()
+
+	if s.MaxConnections != nil {
+		ns.MaxConnections = pointerOf(*s.MaxConnections)
 	}
+
+	if s.MaxPendingRequests != nil {
+		ns.MaxPendingRequests = pointerOf(*s.MaxPendingRequests)
+	}
+
+	if s.MaxConcurrentRequests != nil {
+		ns.MaxConcurrentRequests = pointerOf(*s.MaxConcurrentRequests)
+	}
+
+	return ns
 }
 
 const (
@@ -559,16 +571,27 @@ type ConsulIngressServiceConfig struct {
 	MaxConcurrentRequests *uint32 `hcl:"max_concurrent_requests,optional" mapstructure:"max_concurrent_requests"`
 }
 
-func (s *ConsulIngressServiceConfig) Copy() *ConsulIngressServiceConfig {
-	if s == nil {
+func (c *ConsulIngressServiceConfig) Copy() *ConsulIngressServiceConfig {
+	if c == nil {
 		return nil
 	}
 
-	return &ConsulIngressServiceConfig{
-		MaxConnections:        s.MaxConnections,
-		MaxPendingRequests:    s.MaxPendingRequests,
-		MaxConcurrentRequests: s.MaxConcurrentRequests,
+	nc := new(ConsulIngressServiceConfig)
+	*nc = *c
+
+	if c.MaxConnections != nil {
+		nc.MaxConnections = pointer.Of(*c.MaxConnections)
 	}
+
+	if c.MaxPendingRequests != nil {
+		nc.MaxPendingRequests = pointer.Of(*c.MaxPendingRequests)
+	}
+
+	if c.MaxConcurrentRequests != nil {
+		nc.MaxConcurrentRequests = pointer.Of(*c.MaxConcurrentRequests)
+	}
+
+	return nc
 }
 
 // ConsulIngressConfigEntry represents the Consul Configuration Entry type for
