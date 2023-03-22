@@ -591,7 +591,7 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 				MaxPendingRequests:    s.MaxPendingRequests,
 				MaxConcurrentRequests: s.MaxConcurrentRequests,
 				TLS: &api.GatewayServiceTLSConfig{
-					SDS: convertGatawayTLSSDSConfig(s.TLS.SDS),
+					SDS: convertGatewayTLSSDSConfig(s.TLS.SDS),
 				},
 			})
 		}
@@ -599,7 +599,7 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 			Port:     listener.Port,
 			Protocol: listener.Protocol,
 			Services: services,
-			TLS:      convertGatawayTLSConfig(listener.TLS),
+			TLS:      convertGatewayTLSConfig(listener.TLS),
 		})
 	}
 
@@ -607,9 +607,9 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 		Namespace: namespace,
 		Kind:      api.IngressGateway,
 		Name:      service,
-		TLS:       *convertGatawayTLSConfig(entry.TLS),
+		TLS:       *convertGatewayTLSConfig(entry.TLS),
 		Listeners: listeners,
-		Defaults:  (*api.IngressServiceConfig)(entry.Defaults.Copy()),
+		Defaults:  convertIngressServiceConfig(entry.Defaults),
 		Meta:      maps.Clone(entry.Meta),
 	}
 }
@@ -626,21 +626,21 @@ func convertHTTPHeaderModifiers(in *structs.ConsulHTTPHeaderModifiers) *api.HTTP
 	}
 }
 
-func convertGatawayTLSConfig(in *structs.ConsulGatewayTLSConfig) *api.GatewayTLSConfig {
+func convertGatewayTLSConfig(in *structs.ConsulGatewayTLSConfig) *api.GatewayTLSConfig {
 	if in != nil {
 		return &api.GatewayTLSConfig{
 			Enabled:       in.Enabled,
 			TLSMinVersion: in.TLSMinVersion,
 			TLSMaxVersion: in.TLSMaxVersion,
 			CipherSuites:  slices.Clone(in.CipherSuites),
-			SDS:           convertGatawayTLSSDSConfig(in.SDS),
+			SDS:           convertGatewayTLSSDSConfig(in.SDS),
 		}
 	} else {
 		return &api.GatewayTLSConfig{}
 	}
 }
 
-func convertGatawayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.GatewayTLSSDSConfig {
+func convertGatewayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.GatewayTLSSDSConfig {
 	if in != nil {
 		return &api.GatewayTLSSDSConfig{
 			ClusterName:  in.ClusterName,
@@ -648,6 +648,18 @@ func convertGatawayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.Gate
 		}
 	} else {
 		return &api.GatewayTLSSDSConfig{}
+	}
+}
+
+func convertIngressServiceConfig(in *structs.ConsulIngressServiceConfig) *api.IngressServiceConfig {
+	if in != nil {
+		return &api.IngressServiceConfig{
+			MaxConnections:        in.MaxConnections,
+			MaxPendingRequests:    in.MaxPendingRequests,
+			MaxConcurrentRequests: in.MaxConcurrentRequests,
+		}
+	} else {
+		return &api.IngressServiceConfig{}
 	}
 }
 
