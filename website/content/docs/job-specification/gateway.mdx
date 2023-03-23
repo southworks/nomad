@@ -178,6 +178,23 @@ envoy_gateway_bind_addresses "<service>" {
   to verify the gateway's authenticity. It must be provided if a `cert_file` is provided.
 - `sni` `(string: <optional>)` - An optional hostname or domain name to specify during
   the TLS handshake.
+- `request_headers` `(HTTPHeaderModifiers: <optional>)` - A set of HTTP-specific header modification rules that
+  will be applied to requests routed to this service. This cannot be used with a tcp listener.
+- `response_headers` `(HTTPHeaderModifiers: <optional>)` - A set of HTTP-specific header modification rules that 
+  will be applied to responses from this service. This cannot be used with a tcp listener.
+- `tls` `(ServiceTLSConfig: <optional>)` - TLS configuration for this service.
+
+  - `sds` `(SDSConfig: <optional>)` - Defines a set of parameters that configures the SDS source 
+  for the certificate for this specific service. At least one custom host must be specified in Hosts. 
+  The certificate retrieved from SDS will be served for all requests identifying one of the Hosts values 
+  in the TLS Server Name Indication (SNI) header.
+
+    - `cluster_name` `(string)` - The SDS cluster name to connect to to retrieve certificates.
+
+    - `cert_resource` `(string)` - The SDS resource name to request when fetching the certificate from the SDS service.
+- `max_connections` `(int: 0)` - overrides for the Defaults field
+- `max_pending_requests` `(int: 0)` - overrides for the Defaults field
+- `max_concurrent_requests` `(int: 0)` - overrides for the Defaults field
 
 ### `mesh` Parameters
 
