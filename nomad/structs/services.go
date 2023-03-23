@@ -1958,22 +1958,33 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 		return nil
 	}
 
+	ns := new(ConsulIngressService)
+	*ns = *s
+
 	var hosts []string = nil
 	if n := len(s.Hosts); n > 0 {
 		hosts = make([]string, n)
 		copy(hosts, s.Hosts)
 	}
 
-	return &ConsulIngressService{
-		Name:                  s.Name,
-		Hosts:                 hosts,
-		TLS:                   s.TLS.Copy(),
-		RequestHeaders:        s.RequestHeaders.Copy(),
-		ResponseHeaders:       s.ResponseHeaders.Copy(),
-		MaxConnections:        s.MaxConnections,
-		MaxPendingRequests:    s.MaxPendingRequests,
-		MaxConcurrentRequests: s.MaxConcurrentRequests,
+	ns.Name = s.Name
+	ns.Hosts = hosts
+	ns.RequestHeaders = s.RequestHeaders.Copy()
+	ns.ResponseHeaders = s.ResponseHeaders.Copy()
+
+	if s.MaxConnections != nil {
+		ns.MaxConnections = pointer.Of(*s.MaxConnections)
 	}
+
+	if s.MaxPendingRequests != nil {
+		ns.MaxPendingRequests = pointer.Of(*s.MaxPendingRequests)
+	}
+
+	if s.MaxConcurrentRequests != nil {
+		ns.MaxConcurrentRequests = pointer.Of(*s.MaxConcurrentRequests)
+	}
+
+	return ns
 }
 
 func (s *ConsulIngressService) Equal(o *ConsulIngressService) bool {
@@ -2001,15 +2012,15 @@ func (s *ConsulIngressService) Equal(o *ConsulIngressService) bool {
 		return false
 	}
 
-	if s.MaxConnections != o.MaxConnections {
+	if !pointer.Eq(s.MaxConnections, o.MaxConnections) {
 		return false
 	}
 
-	if s.MaxPendingRequests != o.MaxPendingRequests {
+	if !pointer.Eq(s.MaxPendingRequests, o.MaxPendingRequests) {
 		return false
 	}
 
-	if s.MaxConcurrentRequests != o.MaxConcurrentRequests {
+	if !pointer.Eq(s.MaxConcurrentRequests, o.MaxConcurrentRequests) {
 		return false
 	}
 
@@ -2137,12 +2148,22 @@ func (c *ConsulIngressServiceConfig) Copy() *ConsulIngressServiceConfig {
 	if c == nil {
 		return nil
 	}
+	nc := new(ConsulIngressServiceConfig)
+	*nc = *c
 
-	return &ConsulIngressServiceConfig{
-		MaxConnections:        c.MaxConnections,
-		MaxPendingRequests:    c.MaxPendingRequests,
-		MaxConcurrentRequests: c.MaxConcurrentRequests,
+	if c.MaxConnections != nil {
+		nc.MaxConnections = pointer.Of(*c.MaxConnections)
 	}
+
+	if c.MaxPendingRequests != nil {
+		nc.MaxPendingRequests = pointer.Of(*c.MaxPendingRequests)
+	}
+
+	if c.MaxConcurrentRequests != nil {
+		nc.MaxConcurrentRequests = pointer.Of(*c.MaxConcurrentRequests)
+	}
+
+	return nc
 }
 
 func (c *ConsulIngressServiceConfig) Equal(o *ConsulIngressServiceConfig) bool {
@@ -2150,15 +2171,15 @@ func (c *ConsulIngressServiceConfig) Equal(o *ConsulIngressServiceConfig) bool {
 		return c == o
 	}
 
-	if c.MaxConnections != o.MaxConnections {
+	if !pointer.Eq(c.MaxConnections, o.MaxConnections) {
 		return false
 	}
 
-	if c.MaxPendingRequests != o.MaxPendingRequests {
+	if !pointer.Eq(c.MaxPendingRequests, o.MaxPendingRequests) {
 		return false
 	}
 
-	if c.MaxConcurrentRequests != o.MaxConcurrentRequests {
+	if !pointer.Eq(c.MaxConcurrentRequests, o.MaxConcurrentRequests) {
 		return false
 	}
 
