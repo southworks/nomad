@@ -393,7 +393,7 @@ type ConsulGatewayTLSConfig struct {
 	TLSMinVersion string                     `hcl:"tls_min_version,optional" mapstructure:"tls_min_version"`
 	TLSMaxVersion string                     `hcl:"tls_max_version,optional" mapstructure:"tls_max_version"`
 	CipherSuites  []string                   `hcl:"cipher_suites,optional" mapstructure:"cipher_suites"`
-	SDS           *ConsulGatewayTLSSDSConfig `hcl:"sds_config,optional" mapstructure:"sds_config"`
+	SDS           *ConsulGatewayTLSSDSConfig `hcl:"sds_config,block" mapstructure:"sds_config"`
 }
 
 func (tc *ConsulGatewayTLSConfig) Canonicalize() {
@@ -465,7 +465,7 @@ type ConsulIngressListener struct {
 	Port     int                     `hcl:"port,optional"`
 	Protocol string                  `hcl:"protocol,optional"`
 	Services []*ConsulIngressService `hcl:"service,block"`
-	TLS      *ConsulGatewayTLSConfig `hcl:"tls,optional" mapstructure:"tls"`
+	TLS      *ConsulGatewayTLSConfig `hcl:"tls,block" mapstructure:"tls"`
 }
 
 func (l *ConsulIngressListener) Canonicalize() {
