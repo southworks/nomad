@@ -114,6 +114,16 @@ envoy_gateway_bind_addresses "<service>" {
   [`CipherSuites`](/consul/docs/connect/config-entries/ingress-gateway#ciphersuites)
   in the Consul documentation for the supported cipher suites.
 
+- `sds` `(SDSConfig: <optional>)` - Defines a set of parameters that configures the gateway to load
+  TLS certificates from an external SDS service.
+
+    - `cluster_name` `(string)` - Specifies the name of the SDS cluster from which Consul should retrieve certificates.
+    This cluster must be specified in the Gateway's bootstrap configuration.
+
+    - `cert_resource` `(string)` - Specifies an SDS resource name. Consul will request the SDS resource name when
+    fetching the certificate from the SDS service. Setting this causes all listeners to be served exclusively over
+    TLS with this certificate unless overridden by listener-specific TLS configuration.
+
 #### `listener` Parameters
 
 - `port` `(int: required)` - The port that the listener should receive traffic on.
@@ -182,16 +192,16 @@ envoy_gateway_bind_addresses "<service>" {
   will be applied to requests routed to this service. This cannot be used with a tcp listener.
 - `response_headers` `(HTTPHeaderModifiers: <optional>)` - A set of HTTP-specific header modification rules that 
   will be applied to responses from this service. This cannot be used with a tcp listener.
-- `tls` `(ServiceTLSConfig: <optional>)` - TLS configuration for this service.
+- [`tls`][tls] `(ServiceTLSConfig: <optional>)` - TLS configuration for this service.
 
-  - `sds` `(SDSConfig: <optional>)` - Defines a set of parameters that configures the SDS source 
+  - [`sds`][sds] `(SDSConfig: <optional>)` - Defines a set of parameters that configures the SDS source 
   for the certificate for this specific service. At least one custom host must be specified in Hosts. 
   The certificate retrieved from SDS will be served for all requests identifying one of the Hosts values 
   in the TLS Server Name Indication (SNI) header.
 
-    - `cluster_name` `(string)` - The SDS cluster name to connect to to retrieve certificates.
+    - [`cluster_name`][cluster_name] `(string)` - The SDS cluster name to connect to to retrieve certificates.
 
-    - `cert_resource` `(string)` - The SDS resource name to request when fetching the certificate from the SDS service.
+    - [`cert_resource`][cert_resource] `(string)` - The SDS resource name to request when fetching the certificate from the SDS service.
 - `max_connections` `(int: 0)` - overrides for the Defaults field
 - `max_pending_requests` `(int: 0)` - overrides for the Defaults field
 - `max_concurrent_requests` `(int: 0)` - overrides for the Defaults field
