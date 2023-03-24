@@ -95,19 +95,17 @@ envoy_gateway_bind_addresses "<service>" {
 - `meta` `(map<string|string>: nil)` - Specifies arbitrary KV metadata pairs.
 - `defaults` `(IngressServiceConfig: <optional>)` - Default configuration that applies to all upstreams.
 
-    - `max_connections` `(int: 0)` - The maximum number of connections a service instance will be allowed
-    to establish against the given upstream.
-    - `max_pending_requests` `(int: 0)` - The maximum number of requests that will be queued while waiting
-    for a connection to be established.
-    - `max_concurrent_requests` `(int: 0)` - The maximum number of concurrent requests that will be allowed
-    at a single point in time.
-    - `passive_health_check` `(PassiveHealthCheck: <optional>)` - Passive health checks remove hosts from
-    the upstream cluster that are unreachable or that return errors.
-
-        - `internal` `(int: <optional>)` - The time in nanosecond between checks.
-        - `max_failures` `(int: <optional>)` - The number of consecutive failures that cause a host to be
-        removed from the upstream cluster.
-        - `enforcing_consecutive_5xx` `(int: <optional>)` - A percentage representing the chance that a host
+  - `max_connections` `(int: 0)` - The maximum number of connections a service instance will be allowed
+  to establish against the given upstream.
+  - `max_pending_requests` `(int: 0)` - The maximum number of requests that will be queued while waiting
+  for a connection to be established.
+  - `max_concurrent_requests` `(int: 0)` - The maximum number of concurrent requests that will be allowed
+  at a single point in time.
+  - `passive_health_check` `(PassiveHealthCheck: <optional>)` - Passive health checks remove hosts from
+  the upstream cluster that are unreachable or that return errors.
+    - `internal` `(int: <optional>)` - The time in nanosecond between checks.
+    - `max_failures` `(int: <optional>)` - The number of consecutive failures that cause a host to be removed from the upstream cluster.
+    - `enforcing_consecutive_5xx` `(int: <optional>)` - A percentage representing the chance that a host
         will be actually ejected when the proxy detects an outlier status through consecutive errors in the 500 code range.
 
 #### `tls` Parameters
