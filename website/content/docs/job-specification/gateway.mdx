@@ -90,7 +90,7 @@ envoy_gateway_bind_addresses "<service>" {
 ### `ingress` Parameters
 
 - `tls` <code>([tls]: nil)</code> - TLS configuration for this gateway.
-- `listener` <code>(array<[listener]> : required)</code> - One or more listeners that the
+- `listener` <code>(array&lt;[listener]&gt; : required)</code> - One or more listeners that the
   ingress gateway should setup, uniquely identified by their port number.
 - `meta` `(map<string|string>: nil)` - Specifies arbitrary KV metadata pairs.
 - `defaults` `(IngressServiceConfig: <optional>)` - Default configuration that applies to all upstreams.
