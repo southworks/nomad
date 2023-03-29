@@ -498,6 +498,7 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 	ns.Hosts = hosts
 	ns.RequestHeaders = s.RequestHeaders.Copy()
 	ns.ResponseHeaders = s.ResponseHeaders.Copy()
+	ns.TLS = s.TLS.Copy()
 
 	if s.MaxConnections != nil {
 		ns.MaxConnections = pointerOf(*s.MaxConnections)
