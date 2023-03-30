@@ -150,7 +150,9 @@ envoy_gateway_bind_addresses "<service>" {
 
 ### `terminating` Parameters
 
-- `service` <code>(array<[linked-service]>: required)</code> - One or more services to be
+- `meta` <code>(map&lt;string|string&gt;: nil)</code> - Specifies arbitrary KV metadata pairs.
+
+- `service` <code>(array&lt;[linked-service]&gt;: required)</code> - One or more services to be
   linked with the gateway. The gateway will proxy traffic to these services. These
   linked services must be registered with Consul for the gateway to discover their
   addresses. They must also be registered in the same Consul datacenter as the
