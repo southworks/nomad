@@ -996,6 +996,7 @@ func parseProxy(o *ast.ObjectItem) (*api.ConsulProxy, error) {
 	valid := []string{
 		"local_service_address",
 		"local_service_port",
+		"local_service_socket_path",
 		"upstreams",
 		"expose",
 		"config",
