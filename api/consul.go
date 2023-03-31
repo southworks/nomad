@@ -603,8 +603,10 @@ type ConsulIngressConfigEntry struct {
 	// Namespace is not yet supported.
 	// Namespace string
 
-	TLS       *ConsulGatewayTLSConfig  `hcl:"tls,block"`
-	Listeners []*ConsulIngressListener `hcl:"listener,block"`
+	TLS       *ConsulGatewayTLSConfig     `hcl:"tls,block"`
+	Listeners []*ConsulIngressListener    `hcl:"listener,block"`
+	Meta      map[string]string           `hcl:"meta,block" mapstructure:"meta"`
+	Defaults  *ConsulIngressServiceConfig `hcl:"defaults,block" mapstructure:"defaults"`
 }
 
 func (e *ConsulIngressConfigEntry) Canonicalize() {
@@ -616,6 +618,10 @@ func (e *ConsulIngressConfigEntry) Canonicalize() {
 
 	if len(e.Listeners) == 0 {
 		e.Listeners = nil
+	}
+
+	if len(e.Meta) == 0 {
+		e.Meta = nil
 	}
 
 	for _, listener := range e.Listeners {
@@ -639,6 +645,8 @@ func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
 	return &ConsulIngressConfigEntry{
 		TLS:       e.TLS.Copy(),
 		Listeners: listeners,
+		Meta:      maps.Clone(e.Meta),
+		Defaults:  e.Defaults.Copy(),
 	}
 }
 

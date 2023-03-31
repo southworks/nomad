@@ -2189,6 +2189,8 @@ func (c *ConsulIngressServiceConfig) Equal(o *ConsulIngressServiceConfig) bool {
 type ConsulIngressConfigEntry struct {
 	TLS       *ConsulGatewayTLSConfig
 	Listeners []*ConsulIngressListener
+	Meta      map[string]string
+	Defaults  *ConsulIngressServiceConfig
 }
 
 func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
@@ -2207,6 +2209,8 @@ func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
 	return &ConsulIngressConfigEntry{
 		TLS:       e.TLS.Copy(),
 		Listeners: listeners,
+		Meta:      maps.Clone(e.Meta),
+		Defaults:  e.Defaults.Copy(),
 	}
 }
 
@@ -2216,6 +2220,14 @@ func (e *ConsulIngressConfigEntry) Equal(o *ConsulIngressConfigEntry) bool {
 	}
 
 	if !e.TLS.Equal(o.TLS) {
+		return false
+	}
+
+	if !maps.Equal(e.Meta, o.Meta) {
+		return false
+	}
+
+	if !e.Defaults.Equal(o.Defaults) {
 		return false
 	}
 

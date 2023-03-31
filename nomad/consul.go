@@ -613,6 +613,8 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 		Name:      service,
 		TLS:       *convertGatewayTLSConfig(entry.TLS),
 		Listeners: listeners,
+		Defaults:  convertIngressServiceConfig(entry.Defaults),
+		Meta:      maps.Clone(entry.Meta),
 	}
 }
 
@@ -650,6 +652,18 @@ func convertGatewayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.Gate
 		}
 	} else {
 		return &api.GatewayTLSSDSConfig{}
+	}
+}
+
+func convertIngressServiceConfig(in *structs.ConsulIngressServiceConfig) *api.IngressServiceConfig {
+	if in != nil {
+		return &api.IngressServiceConfig{
+			MaxConnections:        in.MaxConnections,
+			MaxPendingRequests:    in.MaxPendingRequests,
+			MaxConcurrentRequests: in.MaxConcurrentRequests,
+		}
+	} else {
+		return &api.IngressServiceConfig{}
 	}
 }
 

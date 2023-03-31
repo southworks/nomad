@@ -3884,6 +3884,12 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 							},
 						},
 					}},
+					Meta: map[string]string{
+						"testKey": "testValue",
+					},
+					Defaults: &structs.ConsulIngressServiceConfig{
+						MaxConnections: pointer.Of(uint32(5120)),
+					},
 				},
 			},
 		}, ApiConsulConnectToStructs(
@@ -3937,6 +3943,12 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 								},
 							},
 						}},
+						Meta: map[string]string{
+							"testKey": "testValue",
+						},
+						Defaults: &api.ConsulIngressServiceConfig{
+							MaxConnections: pointer.Of(uint32(5120)),
+						},
 					},
 				},
 			},
