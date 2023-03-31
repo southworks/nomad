@@ -2744,6 +2744,9 @@ func TestTaskGroupDiff(t *testing.T) {
 										KeyFile:  "key1.pem",
 										SNI:      "linked1.consul",
 									}},
+									Meta: map[string]string{
+										"foo": "qux",
+									},
 								},
 								Mesh: &ConsulMeshConfigEntry{
 									// nothing
@@ -2839,6 +2842,10 @@ func TestTaskGroupDiff(t *testing.T) {
 										KeyFile:  "key2.pem",
 										SNI:      "linked2.consul",
 									}},
+									Meta: map[string]string{
+										"foo":     "var",
+										"testKey": "testValue",
+									},
 								},
 								Mesh: &ConsulMeshConfigEntry{
 									// nothing
@@ -3454,6 +3461,22 @@ func TestTaskGroupDiff(t *testing.T) {
 																New:  "",
 															},
 														},
+													},
+												},
+												Fields: []*FieldDiff{
+													{
+														Type:        DiffTypeEdited,
+														Name:        "Meta[foo]",
+														Old:         "qux",
+														New:         "var",
+														Annotations: nil,
+													},
+													{
+														Type:        DiffTypeAdded,
+														Name:        "Meta[testKey]",
+														Old:         "",
+														New:         "testValue",
+														Annotations: nil,
 													},
 												},
 											},

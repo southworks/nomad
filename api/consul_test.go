@@ -365,6 +365,12 @@ func TestConsulIngressConfigEntry_Canonicalize(t *testing.T) {
 					Name:  "service1",
 					Hosts: []string{"1.1.1.1"},
 				}},
+				TLS: &ConsulGatewayTLSConfig{
+					SDS: &ConsulGatewayTLSSDSConfig{
+						ClusterName:  "foo",
+						CertResource: "bar",
+					},
+				},
 			}},
 		}
 		c.Canonicalize()
@@ -377,6 +383,12 @@ func TestConsulIngressConfigEntry_Canonicalize(t *testing.T) {
 					Name:  "service1",
 					Hosts: []string{"1.1.1.1"},
 				}},
+				TLS: &ConsulGatewayTLSConfig{
+					SDS: &ConsulGatewayTLSSDSConfig{
+						ClusterName:  "foo",
+						CertResource: "bar",
+					},
+				},
 			}},
 		}, c)
 	})
@@ -400,10 +412,43 @@ func TestConsulIngressConfigEntry_Copy(t *testing.T) {
 			Services: []*ConsulIngressService{{
 				Name:  "service1",
 				Hosts: []string{"1.1.1.1", "1.1.1.1:9000"},
+				TLS: &ConsulGatewayTLSConfig{
+					SDS: &ConsulGatewayTLSSDSConfig{
+						ClusterName:  "foo",
+						CertResource: "bar",
+					},
+				},
+				RequestHeaders: &ConsulHTTPHeaderModifiers{
+					Add: map[string]string{
+						"test": "testvalue",
+					},
+					Set: map[string]string{
+						"test1": "testvalue1",
+					},
+					Remove: []string{"test2"},
+				},
+				ResponseHeaders: &ConsulHTTPHeaderModifiers{
+					Add: map[string]string{
+						"test": "testvalue",
+					},
+					Set: map[string]string{
+						"test1": "testvalue1",
+					},
+					Remove: []string{"test2"},
+				},
+				MaxConnections:        pointerOf(uint32(5120)),
+				MaxPendingRequests:    pointerOf(uint32(512)),
+				MaxConcurrentRequests: pointerOf(uint32(2048)),
 			}, {
 				Name:  "service2",
 				Hosts: []string{"2.2.2.2"},
 			}},
+			TLS: &ConsulGatewayTLSConfig{
+				SDS: &ConsulGatewayTLSSDSConfig{
+					ClusterName:  "foo",
+					CertResource: "bar",
+				},
+			},
 		}},
 	}
 
@@ -429,6 +474,15 @@ func TestConsulTerminatingConfigEntry_Canonicalize(t *testing.T) {
 		c.Canonicalize()
 		must.Nil(t, c.Services)
 	})
+
+	t.Run("empty meta", func(t *testing.T) {
+		c := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{},
+			Meta:     make(map[string]string),
+		}
+		c.Canonicalize()
+		must.Nil(t, c.Meta)
+	})
 }
 
 func TestConsulTerminatingConfigEntry_Copy(t *testing.T) {
@@ -449,6 +503,9 @@ func TestConsulTerminatingConfigEntry_Copy(t *testing.T) {
 			KeyFile:  "key_file.pem",
 			SNI:      "sni.terminating.consul",
 		}},
+		Meta: map[string]string{
+			"test-key": "test-value",
+		},
 	}
 
 	t.Run("complete", func(t *testing.T) {

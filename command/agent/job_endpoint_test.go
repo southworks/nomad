@@ -3861,7 +3861,40 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 						Services: []*structs.ConsulIngressService{{
 							Name:  "ingress1",
 							Hosts: []string{"host1"},
+							TLS: &structs.ConsulGatewayTLSConfig{
+								SDS: &structs.ConsulGatewayTLSSDSConfig{
+									ClusterName:  "foo",
+									CertResource: "bar",
+								},
+							},
+							RequestHeaders: &structs.ConsulHTTPHeaderModifiers{
+								Add: map[string]string{
+									"test": "testvalue",
+								},
+								Set: map[string]string{
+									"test1": "testvalue1",
+								},
+								Remove: []string{"test2"},
+							},
+							ResponseHeaders: &structs.ConsulHTTPHeaderModifiers{
+								Add: map[string]string{
+									"test": "testvalue",
+								},
+								Set: map[string]string{
+									"test1": "testvalue1",
+								},
+								Remove: []string{"test2"},
+							},
+							MaxConnections:        pointer.Of(uint32(5120)),
+							MaxPendingRequests:    pointer.Of(uint32(512)),
+							MaxConcurrentRequests: pointer.Of(uint32(2048)),
 						}},
+						TLS: &structs.ConsulGatewayTLSConfig{
+							SDS: &structs.ConsulGatewayTLSSDSConfig{
+								ClusterName:  "foo",
+								CertResource: "bar",
+							},
+						},
 					}},
 				},
 			},
@@ -3881,7 +3914,40 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 							Services: []*api.ConsulIngressService{{
 								Name:  "ingress1",
 								Hosts: []string{"host1"},
+								TLS: &api.ConsulGatewayTLSConfig{
+									SDS: &api.ConsulGatewayTLSSDSConfig{
+										ClusterName:  "foo",
+										CertResource: "bar",
+									},
+								},
+								RequestHeaders: &api.ConsulHTTPHeaderModifiers{
+									Add: map[string]string{
+										"test": "testvalue",
+									},
+									Set: map[string]string{
+										"test1": "testvalue1",
+									},
+									Remove: []string{"test2"},
+								},
+								ResponseHeaders: &api.ConsulHTTPHeaderModifiers{
+									Add: map[string]string{
+										"test": "testvalue",
+									},
+									Set: map[string]string{
+										"test1": "testvalue1",
+									},
+									Remove: []string{"test2"},
+								},
+								MaxConnections:        pointer.Of(uint32(5120)),
+								MaxPendingRequests:    pointer.Of(uint32(512)),
+								MaxConcurrentRequests: pointer.Of(uint32(2048)),
 							}},
+							TLS: &api.ConsulGatewayTLSConfig{
+								SDS: &api.ConsulGatewayTLSSDSConfig{
+									ClusterName:  "foo",
+									CertResource: "bar",
+								},
+							},
 						}},
 					},
 				},
@@ -3900,6 +3966,9 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 						KeyFile:  "key.pem",
 						SNI:      "linked.consul",
 					}},
+					Meta: map[string]string{
+						"test-key": "test-value",
+					},
 				},
 			},
 		}, ApiConsulConnectToStructs(&api.ConsulConnect{
@@ -3912,6 +3981,9 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 						KeyFile:  "key.pem",
 						SNI:      "linked.consul",
 					}},
+					Meta: map[string]string{
+						"test-key": "test-value",
+					},
 				},
 			},
 		}))

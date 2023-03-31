@@ -9,6 +9,7 @@ import (
 	capi "github.com/hashicorp/consul/api"
 	"github.com/hashicorp/nomad/api"
 	"github.com/hashicorp/nomad/ci"
+	"github.com/hashicorp/nomad/helper/pointer"
 	"github.com/stretchr/testify/require"
 )
 
@@ -1637,7 +1638,14 @@ func TestParse(t *testing.T) {
 											Hosts: []string{
 												"10.0.0.1:8001",
 											}},
-										}}, {
+										},
+										TLS: &api.ConsulGatewayTLSConfig{
+											SDS: &api.ConsulGatewayTLSSDSConfig{
+												ClusterName:  "foo",
+												CertResource: "bar",
+											},
+										},
+									}, {
 										Port:     8080,
 										Protocol: "http",
 										Services: []*api.ConsulIngressService{{
@@ -1645,6 +1653,23 @@ func TestParse(t *testing.T) {
 											Hosts: []string{
 												"2.2.2.2:8080",
 											},
+											TLS: &api.ConsulGatewayTLSConfig{
+												SDS: &api.ConsulGatewayTLSSDSConfig{
+													ClusterName:  "foo",
+													CertResource: "bar",
+												},
+											},
+											RequestHeaders: &api.ConsulHTTPHeaderModifiers{
+												Add: map[string]string{
+													"test": "testvalue",
+												},
+											},
+											ResponseHeaders: &api.ConsulHTTPHeaderModifiers{
+												Remove: []string{"test2"},
+											},
+											MaxConnections:        pointer.Of(uint32(5120)),
+											MaxPendingRequests:    pointer.Of(uint32(512)),
+											MaxConcurrentRequests: pointer.Of(uint32(2048)),
 										}},
 									},
 									},
@@ -1688,6 +1713,11 @@ func TestParse(t *testing.T) {
 										Name: "service2",
 										SNI:  "myhost",
 									}},
+									Meta: map[string]string{
+										"test-key":  "test-value",
+										"test-key1": "test-value1",
+										"test-key2": "test-value2",
+									},
 								},
 							},
 						},

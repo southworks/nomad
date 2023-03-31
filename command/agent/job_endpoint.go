@@ -1533,6 +1533,17 @@ func apiConnectIngressGatewayToStructs(in *api.ConsulIngressConfigEntry) *struct
 	}
 }
 
+func apiConnectGatewayTLSSDSConfig(in *api.ConsulGatewayTLSSDSConfig) *structs.ConsulGatewayTLSSDSConfig {
+	if in == nil {
+		return nil
+	}
+
+	return &structs.ConsulGatewayTLSSDSConfig{
+		ClusterName:  in.ClusterName,
+		CertResource: in.CertResource,
+	}
+}
+
 func apiConnectGatewayTLSConfig(in *api.ConsulGatewayTLSConfig) *structs.ConsulGatewayTLSConfig {
 	if in == nil {
 		return nil
@@ -1543,6 +1554,7 @@ func apiConnectGatewayTLSConfig(in *api.ConsulGatewayTLSConfig) *structs.ConsulG
 		TLSMinVersion: in.TLSMinVersion,
 		TLSMaxVersion: in.TLSMaxVersion,
 		CipherSuites:  slices.Clone(in.CipherSuites),
+		SDS:           apiConnectGatewayTLSSDSConfig(in.SDS),
 	}
 }
 
@@ -1567,6 +1579,7 @@ func apiConnectIngressListenerToStructs(in *api.ConsulIngressListener) *structs.
 		Port:     in.Port,
 		Protocol: in.Protocol,
 		Services: apiConnectIngressServicesToStructs(in.Services),
+		TLS:      apiConnectGatewayTLSConfig(in.TLS),
 	}
 }
 
@@ -1582,14 +1595,32 @@ func apiConnectIngressServicesToStructs(in []*api.ConsulIngressService) []*struc
 	return services
 }
 
+func apiConsulHTTPHeaderModifiersToStructs(in *api.ConsulHTTPHeaderModifiers) *structs.ConsulHTTPHeaderModifiers {
+	if in == nil {
+		return nil
+	}
+
+	return &structs.ConsulHTTPHeaderModifiers{
+		Add:    maps.Clone(in.Add),
+		Set:    maps.Clone(in.Set),
+		Remove: slices.Clone(in.Remove),
+	}
+}
+
 func apiConnectIngressServiceToStructs(in *api.ConsulIngressService) *structs.ConsulIngressService {
 	if in == nil {
 		return nil
 	}
 
 	return &structs.ConsulIngressService{
-		Name:  in.Name,
-		Hosts: slices.Clone(in.Hosts),
+		Name:                  in.Name,
+		Hosts:                 slices.Clone(in.Hosts),
+		TLS:                   apiConnectGatewayTLSConfig(in.TLS),
+		RequestHeaders:        apiConsulHTTPHeaderModifiersToStructs(in.RequestHeaders),
+		ResponseHeaders:       apiConsulHTTPHeaderModifiersToStructs(in.ResponseHeaders),
+		MaxConnections:        in.MaxConnections,
+		MaxPendingRequests:    in.MaxPendingRequests,
+		MaxConcurrentRequests: in.MaxConcurrentRequests,
 	}
 }
 
@@ -1600,6 +1631,7 @@ func apiConnectTerminatingGatewayToStructs(in *api.ConsulTerminatingConfigEntry)
 
 	return &structs.ConsulTerminatingConfigEntry{
 		Services: apiConnectTerminatingServicesToStructs(in.Services),
+		Meta:     in.Meta,
 	}
 }
 

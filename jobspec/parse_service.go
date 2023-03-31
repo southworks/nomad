@@ -74,7 +74,6 @@ func parseService(o *ast.ObjectItem) (*api.Service, error) {
 	if err := mapstructure.WeakDecode(m, &service); err != nil {
 		return nil, err
 	}
-
 	// Filter list
 	var listVal *ast.ObjectList
 	if ot, ok := o.Val.(*ast.ObjectType); ok {
@@ -422,10 +421,84 @@ func parseGatewayProxy(o *ast.ObjectItem) (*api.ConsulGatewayProxy, error) {
 	return &proxy, nil
 }
 
+func parseConsulHTTPHeaderModifiers(o *ast.ObjectItem) (*api.ConsulHTTPHeaderModifiers, error) {
+	valid := []string{
+		"add",
+		"set",
+		"remove",
+	}
+
+	if err := checkHCLKeys(o.Val, valid); err != nil {
+		return nil, multierror.Prefix(err, "httpHeaderModifiers ->")
+	}
+
+	var httpHeaderModifiers api.ConsulHTTPHeaderModifiers
+	var m map[string]interface{}
+	if err := hcl.DecodeObject(&m, o.Val); err != nil {
+		return nil, err
+	}
+
+	delete(m, "add")
+	delete(m, "set")
+
+	dec, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		Result: &httpHeaderModifiers,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err := dec.Decode(m); err != nil {
+		return nil, err
+	}
+
+	// Filter list
+	var listVal *ast.ObjectList
+	if ot, ok := o.Val.(*ast.ObjectType); ok {
+		listVal = ot.List
+	} else {
+		return nil, fmt.Errorf("'httpHeaderModifiers: should be an object")
+	}
+
+	// Parse Add
+	if addO := listVal.Filter("add"); len(addO.Items) > 0 {
+		for _, o := range addO.Elem().Items {
+			var m map[string]interface{}
+			if err := hcl.DecodeObject(&m, o.Val); err != nil {
+				return nil, err
+			}
+			if err := mapstructure.WeakDecode(m, &httpHeaderModifiers.Add); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	// Parse Set
+	if setO := listVal.Filter("set"); len(setO.Items) > 0 {
+		for _, o := range setO.Elem().Items {
+			var m map[string]interface{}
+			if err := hcl.DecodeObject(&m, o.Val); err != nil {
+				return nil, err
+			}
+			if err := mapstructure.WeakDecode(m, &httpHeaderModifiers.Set); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return &httpHeaderModifiers, nil
+}
+
 func parseConsulIngressService(o *ast.ObjectItem) (*api.ConsulIngressService, error) {
 	valid := []string{
 		"name",
 		"hosts",
+		"tls",
+		"request_headers",
+		"response_headers",
+		"max_connections",
+		"max_pending_requests",
+		"max_concurrent_requests",
 	}
 
 	if err := checkHCLKeys(o.Val, valid); err != nil {
@@ -438,6 +511,10 @@ func parseConsulIngressService(o *ast.ObjectItem) (*api.ConsulIngressService, er
 		return nil, err
 	}
 
+	delete(m, "tls")
+	delete(m, "request_headers")
+	delete(m, "response_headers")
+
 	dec, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
 		Result: &service,
 	})
@@ -447,6 +524,37 @@ func parseConsulIngressService(o *ast.ObjectItem) (*api.ConsulIngressService, er
 
 	if err := dec.Decode(m); err != nil {
 		return nil, err
+	}
+
+	var listVal *ast.ObjectList
+	if ot, ok := o.Val.(*ast.ObjectType); ok {
+		listVal = ot.List
+	} else {
+		return nil, fmt.Errorf("service: should be an object")
+	}
+
+	// Parse TLS
+	if tlsO := listVal.Filter("tls"); len(tlsO.Items) > 0 {
+		service.TLS, err = parseConsulGatewayTLS(tlsO.Items[0])
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Parse Request Headers
+	if rqstHO := listVal.Filter("request_headers"); len(rqstHO.Items) > 0 {
+		service.RequestHeaders, err = parseConsulHTTPHeaderModifiers(rqstHO.Items[0])
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Parse Response Headers
+	if rspHO := listVal.Filter("response_headers"); len(rspHO.Items) > 0 {
+		service.ResponseHeaders, err = parseConsulHTTPHeaderModifiers(rspHO.Items[0])
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &service, nil
@@ -490,6 +598,7 @@ func parseConsulIngressListener(o *ast.ObjectItem) (*api.ConsulIngressListener, 
 		"port",
 		"protocol",
 		"service",
+		"tls",
 	}
 
 	if err := checkHCLKeys(o.Val, valid); err != nil {
@@ -503,6 +612,7 @@ func parseConsulIngressListener(o *ast.ObjectItem) (*api.ConsulIngressListener, 
 	}
 
 	delete(m, "service")
+	delete(m, "tls")
 
 	dec, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
 		Result: &listener,
@@ -535,7 +645,45 @@ func parseConsulIngressListener(o *ast.ObjectItem) (*api.ConsulIngressListener, 
 			listener.Services[i] = is
 		}
 	}
+	to := listVal.Filter("tls")
+	if len(to.Items) > 0 {
+		listener.TLS, err = parseConsulGatewayTLS(to.Items[0])
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &listener, nil
+}
+
+func parseConsulGatewayTLSSDS(o *ast.ObjectItem) (*api.ConsulGatewayTLSSDSConfig, error) {
+	valid := []string{
+		"cluster_name",
+		"cert_resource",
+	}
+
+	if err := checkHCLKeys(o.Val, valid); err != nil {
+		return nil, multierror.Prefix(err, "sds ->")
+	}
+
+	var sds api.ConsulGatewayTLSSDSConfig
+	var m map[string]interface{}
+	if err := hcl.DecodeObject(&m, o.Val); err != nil {
+		return nil, err
+	}
+
+	dec, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		Result: &sds,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err := dec.Decode(m); err != nil {
+		return nil, err
+	}
+
+	return &sds, nil
 }
 
 func parseConsulGatewayTLS(o *ast.ObjectItem) (*api.ConsulGatewayTLSConfig, error) {
@@ -544,6 +692,7 @@ func parseConsulGatewayTLS(o *ast.ObjectItem) (*api.ConsulGatewayTLSConfig, erro
 		"tls_min_version",
 		"tls_max_version",
 		"cipher_suites",
+		"sds_config",
 	}
 
 	if err := checkHCLKeys(o.Val, valid); err != nil {
@@ -556,6 +705,8 @@ func parseConsulGatewayTLS(o *ast.ObjectItem) (*api.ConsulGatewayTLSConfig, erro
 		return nil, err
 	}
 
+	delete(m, "sds_config")
+
 	dec, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
 		Result: &tls,
 	})
@@ -565,6 +716,22 @@ func parseConsulGatewayTLS(o *ast.ObjectItem) (*api.ConsulGatewayTLSConfig, erro
 
 	if err := dec.Decode(m); err != nil {
 		return nil, err
+	}
+
+	// Parse SDS
+	var listVal *ast.ObjectList
+	if ot, ok := o.Val.(*ast.ObjectType); ok {
+		listVal = ot.List
+	} else {
+		return nil, fmt.Errorf("tls: should be an object")
+	}
+
+	so := listVal.Filter("sds_config")
+	if len(so.Items) > 0 {
+		tls.SDS, err = parseConsulGatewayTLSSDS(so.Items[0])
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &tls, nil
@@ -626,6 +793,7 @@ func parseIngressConfigEntry(o *ast.ObjectItem) (*api.ConsulIngressConfigEntry, 
 func parseTerminatingConfigEntry(o *ast.ObjectItem) (*api.ConsulTerminatingConfigEntry, error) {
 	valid := []string{
 		"service",
+		"meta",
 	}
 
 	if err := checkHCLKeys(o.Val, valid); err != nil {
@@ -633,6 +801,24 @@ func parseTerminatingConfigEntry(o *ast.ObjectItem) (*api.ConsulTerminatingConfi
 	}
 
 	var terminating api.ConsulTerminatingConfigEntry
+	var m map[string]interface{}
+	if err := hcl.DecodeObject(&m, o.Val); err != nil {
+		return nil, err
+	}
+
+	delete(m, "service")
+
+	dec, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		DecodeHook:       mapstructure.StringToTimeDurationHookFunc(),
+		WeaklyTypedInput: true,
+		Result:           &terminating,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if err := dec.Decode(m); err != nil {
+		return nil, fmt.Errorf("terminating: %v", err)
+	}
 
 	// Parse service(s)
 

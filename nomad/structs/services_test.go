@@ -883,6 +883,12 @@ var (
 					Name:  "service2",
 					Hosts: []string{"10.0.0.2", "10.0.0.2:3000"},
 				}},
+				TLS: &ConsulGatewayTLSConfig{
+					SDS: &ConsulGatewayTLSSDSConfig{
+						ClusterName:  "foo",
+						CertResource: "bar",
+					},
+				},
 			}, {
 				Port:     3001,
 				Protocol: "tcp",
@@ -909,6 +915,9 @@ var (
 			}, {
 				Name: "linked-service2",
 			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
 		},
 	}
 
@@ -1061,6 +1070,12 @@ func TestConsulGateway_Equal_ingress(t *testing.T) {
 		try(t, func(g *cg) { g.Ingress.Listeners[0].Port = 7777 })
 	})
 
+	t.Run("mod ingress listeners tls sds clustername and certresource", func(t *testing.T) {
+		try(t, func(g *cg) {
+			g.Ingress.Listeners[0].TLS.SDS = &ConsulGatewayTLSSDSConfig{ClusterName: "baz", CertResource: "qux"}
+		})
+	})
+
 	t.Run("mod ingress listeners protocol", func(t *testing.T) {
 		try(t, func(g *cg) { g.Ingress.Listeners[0].Protocol = "tcp" })
 	})
@@ -1176,6 +1191,12 @@ func TestConsulGateway_ingressListenersEqual(t *testing.T) {
 			Name:  "service1",
 			Hosts: []string{"host1", "host2"},
 		}},
+		TLS: &ConsulGatewayTLSConfig{
+			SDS: &ConsulGatewayTLSSDSConfig{
+				ClusterName:  "foo",
+				CertResource: "bar",
+			},
+		},
 	}, {
 		Port:     2001,
 		Protocol: "tcp",
@@ -1634,6 +1655,79 @@ func TestConsulLinkedService_linkedServicesEqual(t *testing.T) {
 	require.False(t, linkedServicesEqual(services, different))
 }
 
+func TestConsulTerminatingConfigEntry_Copy(t *testing.T) {
+	ci.Parallel(t)
+
+	t.Run("nil", func(t *testing.T) {
+		new := (*ConsulTerminatingConfigEntry)(nil).Copy()
+		require.Nil(t, new)
+	})
+
+	t.Run("ok", func(t *testing.T) {
+		original := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service1",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
+		}
+		new := original.Copy()
+		require.Equal(t, new, original)
+	})
+}
+
+func TestConsulTerminatingConfigEntry_Equal(t *testing.T) {
+	ci.Parallel(t)
+
+	t.Run("nil", func(t *testing.T) {
+		res := (*ConsulTerminatingConfigEntry)(nil).Equal((*ConsulTerminatingConfigEntry)(nil))
+		require.True(t, res)
+	})
+
+	t.Run("not equal", func(t *testing.T) {
+		original := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service1",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
+		}
+		new := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service2",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value2",
+			},
+		}
+		res := original.Equal(new)
+		require.False(t, res)
+	})
+
+	t.Run("equal", func(t *testing.T) {
+		original := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service1",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
+		}
+		new := &ConsulTerminatingConfigEntry{
+			Services: []*ConsulLinkedService{{
+				Name: "service1",
+			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
+		}
+		res := original.Equal(new)
+		require.True(t, res)
+	})
+}
+
 func TestConsulTerminatingConfigEntry_Validate(t *testing.T) {
 	ci.Parallel(t)
 
@@ -1663,6 +1757,9 @@ func TestConsulTerminatingConfigEntry_Validate(t *testing.T) {
 			Services: []*ConsulLinkedService{{
 				Name: "service1",
 			}},
+			Meta: map[string]string{
+				"test-key": "test-value",
+			},
 		}).Validate()
 		require.NoError(t, err)
 	})
