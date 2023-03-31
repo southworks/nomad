@@ -39,6 +39,12 @@ job "connect_gateway_ingress" {
                 name  = "service2"
                 hosts = ["10.0.0.1:8001"]
               }
+              tls {
+                sds_config {
+                  cluster_name  = "foo"
+                  cert_resource = "bar"
+                }
+              }
             }
 
             listener {
@@ -47,6 +53,23 @@ job "connect_gateway_ingress" {
               service {
                 name  = "nginx"
                 hosts = ["2.2.2.2:8080"]
+                tls {
+                  sds_config {
+                    cluster_name  = "foo"
+                    cert_resource = "bar"
+                  }
+                }
+                request_headers {
+                  add {
+                    test = "testvalue"
+                  }
+                }
+                response_headers {
+                  remove = ["test2"]
+                }
+                max_connections         = 5120
+                max_pending_requests    = 512
+                max_concurrent_requests = 2048
               }
             }
           }

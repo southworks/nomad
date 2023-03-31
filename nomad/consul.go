@@ -582,32 +582,74 @@ func convertIngressCE(namespace, service string, entry *structs.ConsulIngressCon
 	for _, listener := range entry.Listeners {
 		var services []api.IngressService = nil
 		for _, s := range listener.Services {
+			var sds *api.GatewayTLSSDSConfig = nil
+			if s.TLS != nil {
+				sds = convertGatewayTLSSDSConfig(s.TLS.SDS)
+			}
 			services = append(services, api.IngressService{
-				Name:  s.Name,
-				Hosts: slices.Clone(s.Hosts),
+				Name:                  s.Name,
+				Hosts:                 slices.Clone(s.Hosts),
+				RequestHeaders:        convertHTTPHeaderModifiers(s.RequestHeaders),
+				ResponseHeaders:       convertHTTPHeaderModifiers(s.ResponseHeaders),
+				MaxConnections:        s.MaxConnections,
+				MaxPendingRequests:    s.MaxPendingRequests,
+				MaxConcurrentRequests: s.MaxConcurrentRequests,
+				TLS: &api.GatewayServiceTLSConfig{
+					SDS: sds,
+				},
 			})
 		}
 		listeners = append(listeners, api.IngressListener{
 			Port:     listener.Port,
 			Protocol: listener.Protocol,
 			Services: services,
+			TLS:      convertGatewayTLSConfig(listener.TLS),
 		})
-	}
-
-	tls := api.GatewayTLSConfig{}
-	if entry.TLS != nil {
-		tls.Enabled = entry.TLS.Enabled
-		tls.TLSMinVersion = entry.TLS.TLSMinVersion
-		tls.TLSMaxVersion = entry.TLS.TLSMaxVersion
-		tls.CipherSuites = slices.Clone(entry.TLS.CipherSuites)
 	}
 
 	return &api.IngressGatewayConfigEntry{
 		Namespace: namespace,
 		Kind:      api.IngressGateway,
 		Name:      service,
-		TLS:       tls,
+		TLS:       *convertGatewayTLSConfig(entry.TLS),
 		Listeners: listeners,
+	}
+}
+
+func convertHTTPHeaderModifiers(in *structs.ConsulHTTPHeaderModifiers) *api.HTTPHeaderModifiers {
+	if in != nil {
+		return &api.HTTPHeaderModifiers{
+			Add:    maps.Clone(in.Add),
+			Set:    maps.Clone(in.Set),
+			Remove: slices.Clone(in.Remove),
+		}
+	} else {
+		return &api.HTTPHeaderModifiers{}
+	}
+}
+
+func convertGatewayTLSConfig(in *structs.ConsulGatewayTLSConfig) *api.GatewayTLSConfig {
+	if in != nil {
+		return &api.GatewayTLSConfig{
+			Enabled:       in.Enabled,
+			TLSMinVersion: in.TLSMinVersion,
+			TLSMaxVersion: in.TLSMaxVersion,
+			CipherSuites:  slices.Clone(in.CipherSuites),
+			SDS:           convertGatewayTLSSDSConfig(in.SDS),
+		}
+	} else {
+		return &api.GatewayTLSConfig{}
+	}
+}
+
+func convertGatewayTLSSDSConfig(in *structs.ConsulGatewayTLSSDSConfig) *api.GatewayTLSSDSConfig {
+	if in != nil {
+		return &api.GatewayTLSSDSConfig{
+			ClusterName:  in.ClusterName,
+			CertResource: in.CertResource,
+		}
+	} else {
+		return &api.GatewayTLSSDSConfig{}
 	}
 }
 
