@@ -1177,10 +1177,10 @@ func TestParse(t *testing.T) {
 											Upstreams: []*api.ConsulUpstream{
 												{
 													DestinationPartition: "partition-1",
-													DestinationName:  "other-service",
-													LocalBindPort:    4567,
-													LocalBindAddress: "0.0.0.0",
-													Datacenter:       "dc1",
+													DestinationName:      "other-service",
+													LocalBindPort:        4567,
+													LocalBindAddress:     "0.0.0.0",
+													Datacenter:           "dc1",
 
 													MeshGateway: &api.ConsulMeshGateway{
 														Mode: "local",
@@ -1609,12 +1609,14 @@ func TestParse(t *testing.T) {
 												"127.0.0.1:8001",
 												"[::1]:8001",
 											},
-											Partition: "partition-1"}, {
+											Partition: "partition-1",
+										}, {
 											Name: "service2",
 											Hosts: []string{
 												"10.0.0.1:8001",
 											},
-											Partition: "partition-1"},
+											Partition: "partition-1",
+										},
 										}}, {
 										Port:     8080,
 										Protocol: "http",

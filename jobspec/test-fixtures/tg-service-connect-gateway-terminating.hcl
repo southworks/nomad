@@ -28,6 +28,7 @@ job "connect_gateway_terminating" {
           }
 
           terminating {
+            partition = "partition-1"
             service {
               name      = "service1"
               ca_file   = "ca.pem"
