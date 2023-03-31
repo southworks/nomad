@@ -83,6 +83,7 @@ job "countdash" {
 
 - `destination_name` `(string: <required>)` - Name of the upstream service.
 - `destination_namespace` `(string: <required>)` - Name of the upstream Consul namespace.
+- `destination_peer` `(string: "")` - Name of the name of the peer cluster containing the upstream service.
 - `local_bind_port` - `(int: <required>)` - The port the proxy will receive
   connections for the upstream on.
 - `datacenter` `(string: "")` - The Consul datacenter in which to issue the
@@ -90,6 +91,9 @@ job "countdash" {
   local Consul datacenter.
 - `local_bind_address` - `(string: "")` - The address the proxy will receive
   connections for the upstream on.
+- `local_bind_socket_path` - `(string: "")` - The path at which to bind a Unix domain socket listener.
+- `local_bind_socket_mode` - `(string: "")` - Unix octal that configures file permissions for the socket.
+- `destination_type` - `(string: "service")` - The type of discovery query the proxy should use for finding service mesh instances. 
 - `mesh_gateway` <code>([mesh_gateway][mesh_gateway_param]: nil)</code> - Configures the mesh gateway
   behavior for connecting to this upstream.
 - `config` `(map: nil)` - Upstream configuration that is opaque to Nomad and passed
