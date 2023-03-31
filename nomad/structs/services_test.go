@@ -803,10 +803,12 @@ func TestConsulExposeConfig_Copy(t *testing.T) {
 		Paths: []ConsulExposePath{{
 			Path: "/health",
 		}},
+		Checks: true,
 	}, (&ConsulExposeConfig{
 		Paths: []ConsulExposePath{{
 			Path: "/health",
 		}},
+		Checks: true,
 	}).Copy())
 }
 
@@ -815,10 +817,12 @@ func TestConsulExposeConfig_Equal(t *testing.T) {
 
 	require.True(t, (*ConsulExposeConfig)(nil).Equal(nil))
 	require.True(t, (&ConsulExposeConfig{
+		Checks: true,
 		Paths: []ConsulExposePath{{
 			Path: "/health",
 		}},
 	}).Equal(&ConsulExposeConfig{
+		Checks: true,
 		Paths: []ConsulExposePath{{
 			Path: "/health",
 		}},

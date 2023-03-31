@@ -138,6 +138,13 @@ job "expose-example" {
 
 ### `path` Parameters
 
+- `checks` `(bool: false)` - If enabled, all HTTP and gRPC checks registered with the agent are exposed through Envoy.
+  Envoy will expose listeners for these checks and will only accept connections originating from localhost
+  or Consul's [`advertise address`](/consul/docs/agent/config/config-files#advertise).
+  The port for these listeners are dynamically allocated from
+  [`expose_min_port`](/consul/docs/agent/config/config-files#expose_min_port)
+  to [`expose_max_port`](/consul/docs/agent/config/config-files#expose_max_port).
+
 - `path` `(string: required)` - The HTTP or gRPC path to expose. The path must be prefixed
   with a slash.
 

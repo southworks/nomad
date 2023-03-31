@@ -1753,7 +1753,8 @@ func apiConsulExposeConfigToStructs(in *api.ConsulExposeConfig) *structs.ConsulE
 	}
 
 	return &structs.ConsulExposeConfig{
-		Paths: apiConsulExposePathsToStructs(paths),
+		Checks: in.Checks,
+		Paths:  apiConsulExposePathsToStructs(paths),
 	}
 }
 

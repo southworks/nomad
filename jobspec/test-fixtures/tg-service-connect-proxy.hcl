@@ -23,6 +23,7 @@ job "service-connect-proxy" {
             }
 
             expose {
+              checks = true
               path {
                 path            = "/metrics"
                 protocol        = "http"
