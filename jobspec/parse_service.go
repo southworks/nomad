@@ -74,7 +74,6 @@ func parseService(o *ast.ObjectItem) (*api.Service, error) {
 	if err := mapstructure.WeakDecode(m, &service); err != nil {
 		return nil, err
 	}
-	// aca
 	// Filter list
 	var listVal *ast.ObjectList
 	if ot, ok := o.Val.(*ast.ObjectType); ok {
