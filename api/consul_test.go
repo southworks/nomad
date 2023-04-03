@@ -172,6 +172,7 @@ func TestConsulUpstream_Copy(t *testing.T) {
 
 	t.Run("complete upstream", func(t *testing.T) {
 		cu := &ConsulUpstream{
+			DestinationPartition: "partition-1",
 			DestinationName:      "dest1",
 			DestinationNamespace: "ns2",
 			Datacenter:           "dc2",
@@ -196,6 +197,7 @@ func TestConsulUpstream_Canonicalize(t *testing.T) {
 
 	t.Run("complete", func(t *testing.T) {
 		cu := &ConsulUpstream{
+			DestinationPartition: "partition-1",
 			DestinationName:      "dest1",
 			DestinationNamespace: "ns2",
 			Datacenter:           "dc2",
@@ -206,6 +208,7 @@ func TestConsulUpstream_Canonicalize(t *testing.T) {
 		}
 		cu.Canonicalize()
 		must.Eq(t, &ConsulUpstream{
+			DestinationPartition: "partition-1",
 			DestinationName:      "dest1",
 			DestinationNamespace: "ns2",
 			Datacenter:           "dc2",
@@ -364,8 +367,10 @@ func TestConsulIngressConfigEntry_Canonicalize(t *testing.T) {
 				Services: []*ConsulIngressService{{
 					Name:  "service1",
 					Hosts: []string{"1.1.1.1"},
+					Partition: "partition-1",
 				}},
 			}},
+			Partition: "partition-1",
 		}
 		c.Canonicalize()
 		must.Eq(t, &ConsulIngressConfigEntry{
@@ -376,8 +381,10 @@ func TestConsulIngressConfigEntry_Canonicalize(t *testing.T) {
 				Services: []*ConsulIngressService{{
 					Name:  "service1",
 					Hosts: []string{"1.1.1.1"},
+					Partition: "partition-1",
 				}},
 			}},
+			Partition: "partition-1",
 		}, c)
 	})
 }
@@ -405,6 +412,7 @@ func TestConsulIngressConfigEntry_Copy(t *testing.T) {
 				Hosts: []string{"2.2.2.2"},
 			}},
 		}},
+		Partition: "partition-1",
 	}
 
 	t.Run("complete", func(t *testing.T) {
@@ -449,6 +457,7 @@ func TestConsulTerminatingConfigEntry_Copy(t *testing.T) {
 			KeyFile:  "key_file.pem",
 			SNI:      "sni.terminating.consul",
 		}},
+		Partition: "partition-1",
 	}
 
 	t.Run("complete", func(t *testing.T) {

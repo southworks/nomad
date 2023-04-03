@@ -205,6 +205,7 @@ func (c *ConsulMeshGateway) Copy() *ConsulMeshGateway {
 
 // ConsulUpstream represents a Consul Connect upstream jobspec block.
 type ConsulUpstream struct {
+	DestinationPartition string             `mapstructure:"destination_partition" hcl:"destination_partition,optional"`
 	DestinationName      string             `mapstructure:"destination_name" hcl:"destination_name,optional"`
 	DestinationNamespace string             `mapstructure:"destination_namespace" hcl:"destination_namespace,optional"`
 	LocalBindPort        int                `mapstructure:"local_bind_port" hcl:"local_bind_port,optional"`
@@ -219,6 +220,7 @@ func (cu *ConsulUpstream) Copy() *ConsulUpstream {
 		return nil
 	}
 	return &ConsulUpstream{
+		DestinationPartition: cu.DestinationPartition,
 		DestinationName:      cu.DestinationName,
 		DestinationNamespace: cu.DestinationNamespace,
 		LocalBindPort:        cu.LocalBindPort,
@@ -413,6 +415,8 @@ type ConsulIngressService struct {
 	Name string `hcl:"name,optional"`
 
 	Hosts []string `hcl:"hosts,optional"`
+
+	Partition string `mapstructure:"partition" hcl:"partition,optional"`
 }
 
 func (s *ConsulIngressService) Canonicalize() {
@@ -439,6 +443,7 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 	return &ConsulIngressService{
 		Name:  s.Name,
 		Hosts: hosts,
+		Partition: s.Partition,
 	}
 }
 
@@ -497,6 +502,7 @@ type ConsulIngressConfigEntry struct {
 	// Namespace is not yet supported.
 	// Namespace string
 
+	Partition string                   `mapstructure:"partition" hcl:"partition,optional"`
 	TLS       *ConsulGatewayTLSConfig  `hcl:"tls,block"`
 	Listeners []*ConsulIngressListener `hcl:"listener,block"`
 }
@@ -531,6 +537,7 @@ func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
 	}
 
 	return &ConsulIngressConfigEntry{
+		Partition: e.Partition,
 		TLS:       e.TLS.Copy(),
 		Listeners: listeners,
 	}
@@ -570,7 +577,8 @@ type ConsulTerminatingConfigEntry struct {
 	// Namespace is not yet supported.
 	// Namespace string
 
-	Services []*ConsulLinkedService `hcl:"service,block"`
+	Services  []*ConsulLinkedService `hcl:"service,block"`
+	Partition string                 `hcl:"partition,optional" mapstructure:"partition"`
 }
 
 func (e *ConsulTerminatingConfigEntry) Canonicalize() {
@@ -601,7 +609,8 @@ func (e *ConsulTerminatingConfigEntry) Copy() *ConsulTerminatingConfigEntry {
 	}
 
 	return &ConsulTerminatingConfigEntry{
-		Services: services,
+		Services:  services,
+		Partition: e.Partition,
 	}
 }
 

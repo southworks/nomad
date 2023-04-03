@@ -1463,6 +1463,10 @@ func (c *ConsulMeshGateway) Validate() error {
 
 // ConsulUpstream represents a Consul Connect upstream jobspec block.
 type ConsulUpstream struct {
+	// DestinationPartition is used to define the target partition to divide
+	// network traffic into groups
+	DestinationPartition string
+
 	// DestinationName is the name of the upstream service.
 	DestinationName string
 
@@ -1495,6 +1499,8 @@ func (u *ConsulUpstream) Equal(o *ConsulUpstream) bool {
 		return u == o
 	}
 	switch {
+	case u.DestinationPartition != o.DestinationPartition:
+		return false
 	case u.DestinationName != o.DestinationName:
 		return false
 	case u.DestinationNamespace != o.DestinationNamespace:
@@ -1869,6 +1875,9 @@ func (c *ConsulGatewayTLSConfig) Equal(o *ConsulGatewayTLSConfig) bool {
 type ConsulIngressService struct {
 	Name  string
 	Hosts []string
+	// Partition is the partition where the service is located.
+	// Partitioning is a Consul Enterprise feature.
+	Partition string `json:",omitempty"`
 }
 
 func (s *ConsulIngressService) Copy() *ConsulIngressService {
@@ -1885,6 +1894,7 @@ func (s *ConsulIngressService) Copy() *ConsulIngressService {
 	return &ConsulIngressService{
 		Name:  s.Name,
 		Hosts: hosts,
+		Partition: s.Partition,
 	}
 }
 
@@ -1894,6 +1904,10 @@ func (s *ConsulIngressService) Equal(o *ConsulIngressService) bool {
 	}
 
 	if s.Name != o.Name {
+		return false
+	}
+
+	if s.Partition != o.Partition {
 		return false
 	}
 
@@ -2010,6 +2024,9 @@ func ingressServicesEqual(a, b []*ConsulIngressService) bool {
 //
 // https://www.consul.io/docs/agent/config-entries/ingress-gateway#available-fields
 type ConsulIngressConfigEntry struct {
+	// Partition is the partition the IngressGateway is associated with.
+	// Partitioning is a Consul Enterprise feature.
+	Partition string `json:",omitempty"`
 	TLS       *ConsulGatewayTLSConfig
 	Listeners []*ConsulIngressListener
 }
@@ -2028,6 +2045,7 @@ func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
 	}
 
 	return &ConsulIngressConfigEntry{
+		Partition: e.Partition,
 		TLS:       e.TLS.Copy(),
 		Listeners: listeners,
 	}
@@ -2039,6 +2057,10 @@ func (e *ConsulIngressConfigEntry) Equal(o *ConsulIngressConfigEntry) bool {
 	}
 
 	if !e.TLS.Equal(o.TLS) {
+		return false
+	}
+
+	if e.Partition != o.Partition {
 		return false
 	}
 
@@ -2145,6 +2167,10 @@ func linkedServicesEqual(a, b []*ConsulLinkedService) bool {
 
 type ConsulTerminatingConfigEntry struct {
 	Services []*ConsulLinkedService
+
+	// Partition is the partition the config entry is associated with.
+	// Partitioning is a Consul Enterprise feature.
+	Partition string `json:",omitempty"`
 }
 
 func (e *ConsulTerminatingConfigEntry) Copy() *ConsulTerminatingConfigEntry {
@@ -2161,13 +2187,18 @@ func (e *ConsulTerminatingConfigEntry) Copy() *ConsulTerminatingConfigEntry {
 	}
 
 	return &ConsulTerminatingConfigEntry{
-		Services: services,
+		Services:  services,
+		Partition: e.Partition,
 	}
 }
 
 func (e *ConsulTerminatingConfigEntry) Equal(o *ConsulTerminatingConfigEntry) bool {
 	if e == nil || o == nil {
 		return e == o
+	}
+
+	if e.Partition != o.Partition {
+		return false
 	}
 
 	return linkedServicesEqual(e.Services, o.Services)

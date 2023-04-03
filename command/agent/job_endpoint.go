@@ -1528,6 +1528,7 @@ func apiConnectIngressGatewayToStructs(in *api.ConsulIngressConfigEntry) *struct
 	}
 
 	return &structs.ConsulIngressConfigEntry{
+		Partition: in.Partition,
 		TLS:       apiConnectGatewayTLSConfig(in.TLS),
 		Listeners: apiConnectIngressListenersToStructs(in.Listeners),
 	}
@@ -1590,6 +1591,7 @@ func apiConnectIngressServiceToStructs(in *api.ConsulIngressService) *structs.Co
 	return &structs.ConsulIngressService{
 		Name:  in.Name,
 		Hosts: slices.Clone(in.Hosts),
+		Partition: in.Partition,
 	}
 }
 
@@ -1599,7 +1601,8 @@ func apiConnectTerminatingGatewayToStructs(in *api.ConsulTerminatingConfigEntry)
 	}
 
 	return &structs.ConsulTerminatingConfigEntry{
-		Services: apiConnectTerminatingServicesToStructs(in.Services),
+		Services:  apiConnectTerminatingServicesToStructs(in.Services),
+		Partition: in.Partition,
 	}
 }
 
@@ -1676,6 +1679,7 @@ func apiUpstreamsToStructs(in []*api.ConsulUpstream) []structs.ConsulUpstream {
 	upstreams := make([]structs.ConsulUpstream, len(in))
 	for i, upstream := range in {
 		upstreams[i] = structs.ConsulUpstream{
+			DestinationPartition: upstream.DestinationPartition,
 			DestinationName:      upstream.DestinationName,
 			DestinationNamespace: upstream.DestinationNamespace,
 			LocalBindPort:        upstream.LocalBindPort,

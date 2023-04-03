@@ -3711,6 +3711,7 @@ func TestConversion_apiUpstreamsToStructs(t *testing.T) {
 	require.Nil(t, apiUpstreamsToStructs(nil))
 	require.Nil(t, apiUpstreamsToStructs(make([]*api.ConsulUpstream, 0)))
 	require.Equal(t, []structs.ConsulUpstream{{
+		DestinationPartition: "partition-1",
 		DestinationName:      "upstream",
 		DestinationNamespace: "ns2",
 		LocalBindPort:        8000,
@@ -3718,6 +3719,7 @@ func TestConversion_apiUpstreamsToStructs(t *testing.T) {
 		LocalBindAddress:     "127.0.0.2",
 		MeshGateway:          structs.ConsulMeshGateway{Mode: "local"},
 	}}, apiUpstreamsToStructs([]*api.ConsulUpstream{{
+		DestinationPartition: "partition-1",
 		DestinationName:      "upstream",
 		DestinationNamespace: "ns2",
 		LocalBindPort:        8000,
@@ -3859,10 +3861,12 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 						Port:     1111,
 						Protocol: "http",
 						Services: []*structs.ConsulIngressService{{
-							Name:  "ingress1",
-							Hosts: []string{"host1"},
+							Name:      "ingress1",
+							Hosts:     []string{"host1"},
+							Partition: "partition-1",
 						}},
 					}},
+					Partition: "partition-1",
 				},
 			},
 		}, ApiConsulConnectToStructs(
@@ -3879,10 +3883,12 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 							Port:     1111,
 							Protocol: "http",
 							Services: []*api.ConsulIngressService{{
-								Name:  "ingress1",
-								Hosts: []string{"host1"},
+								Name:      "ingress1",
+								Hosts:     []string{"host1"},
+								Partition: "partition-1",
 							}},
 						}},
+						Partition: "partition-1",
 					},
 				},
 			},
@@ -3893,6 +3899,7 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 		require.Equal(t, &structs.ConsulConnect{
 			Gateway: &structs.ConsulGateway{
 				Terminating: &structs.ConsulTerminatingConfigEntry{
+					Partition: "partition-1",
 					Services: []*structs.ConsulLinkedService{{
 						Name:     "linked-service",
 						CAFile:   "ca.pem",
@@ -3905,6 +3912,7 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 		}, ApiConsulConnectToStructs(&api.ConsulConnect{
 			Gateway: &api.ConsulGateway{
 				Terminating: &api.ConsulTerminatingConfigEntry{
+					Partition: "partition-1",
 					Services: []*api.ConsulLinkedService{{
 						Name:     "linked-service",
 						CAFile:   "ca.pem",
