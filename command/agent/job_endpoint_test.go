@@ -3894,11 +3894,12 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 			Gateway: &structs.ConsulGateway{
 				Terminating: &structs.ConsulTerminatingConfigEntry{
 					Services: []*structs.ConsulLinkedService{{
-						Name:     "linked-service",
-						CAFile:   "ca.pem",
-						CertFile: "cert.pem",
-						KeyFile:  "key.pem",
-						SNI:      "linked.consul",
+						Name:      "linked-service",
+						CAFile:    "ca.pem",
+						CertFile:  "cert.pem",
+						KeyFile:   "key.pem",
+						SNI:       "linked.consul",
+						Namespace: "ns1",
 					}},
 				},
 			},
@@ -3906,11 +3907,12 @@ func TestConversion_ApiConsulConnectToStructs(t *testing.T) {
 			Gateway: &api.ConsulGateway{
 				Terminating: &api.ConsulTerminatingConfigEntry{
 					Services: []*api.ConsulLinkedService{{
-						Name:     "linked-service",
-						CAFile:   "ca.pem",
-						CertFile: "cert.pem",
-						KeyFile:  "key.pem",
-						SNI:      "linked.consul",
+						Name:      "linked-service",
+						CAFile:    "ca.pem",
+						CertFile:  "cert.pem",
+						KeyFile:   "key.pem",
+						SNI:       "linked.consul",
+						Namespace: "ns1",
 					}},
 				},
 			},

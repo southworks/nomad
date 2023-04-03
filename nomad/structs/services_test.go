@@ -901,11 +901,12 @@ var (
 		},
 		Terminating: &ConsulTerminatingConfigEntry{
 			Services: []*ConsulLinkedService{{
-				Name:     "linked-service1",
-				CAFile:   "ca.pem",
-				CertFile: "cert.pem",
-				KeyFile:  "key.pem",
-				SNI:      "service1.consul",
+				Name:      "linked-service1",
+				CAFile:    "ca.pem",
+				CertFile:  "cert.pem",
+				KeyFile:   "key.pem",
+				SNI:       "service1.consul",
+				Namespace: "ns1",
 			}, {
 				Name: "linked-service2",
 			}},
@@ -1589,17 +1590,19 @@ func TestConsulLinkedService_Copy(t *testing.T) {
 
 	require.Nil(t, (*ConsulLinkedService)(nil).Copy())
 	require.Equal(t, &ConsulLinkedService{
-		Name:     "service1",
-		CAFile:   "ca.pem",
-		CertFile: "cert.pem",
-		KeyFile:  "key.pem",
-		SNI:      "service1.consul",
+		Name:      "service1",
+		CAFile:    "ca.pem",
+		CertFile:  "cert.pem",
+		KeyFile:   "key.pem",
+		SNI:       "service1.consul",
+		Namespace: "ns1",
 	}, (&ConsulLinkedService{
-		Name:     "service1",
-		CAFile:   "ca.pem",
-		CertFile: "cert.pem",
-		KeyFile:  "key.pem",
-		SNI:      "service1.consul",
+		Name:      "service1",
+		CAFile:    "ca.pem",
+		CertFile:  "cert.pem",
+		KeyFile:   "key.pem",
+		SNI:       "service1.consul",
+		Namespace: "ns1",
 	}).Copy())
 }
 
@@ -1607,11 +1610,13 @@ func TestConsulLinkedService_linkedServicesEqual(t *testing.T) {
 	ci.Parallel(t)
 
 	services := []*ConsulLinkedService{{
-		Name:   "service1",
-		CAFile: "ca.pem",
+		Name:      "service1",
+		CAFile:    "ca.pem",
+		Namespace: "ns1",
 	}, {
-		Name:   "service2",
-		CAFile: "ca.pem",
+		Name:      "service2",
+		CAFile:    "ca.pem",
+		Namespace: "ns1",
 	}}
 
 	require.False(t, linkedServicesEqual(services, nil))

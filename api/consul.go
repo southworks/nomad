@@ -537,11 +537,12 @@ func (e *ConsulIngressConfigEntry) Copy() *ConsulIngressConfigEntry {
 }
 
 type ConsulLinkedService struct {
-	Name     string `hcl:"name,optional"`
-	CAFile   string `hcl:"ca_file,optional" mapstructure:"ca_file"`
-	CertFile string `hcl:"cert_file,optional" mapstructure:"cert_file"`
-	KeyFile  string `hcl:"key_file,optional" mapstructure:"key_file"`
-	SNI      string `hcl:"sni,optional"`
+	Name      string `hcl:"name,optional"`
+	CAFile    string `hcl:"ca_file,optional" mapstructure:"ca_file"`
+	CertFile  string `hcl:"cert_file,optional" mapstructure:"cert_file"`
+	KeyFile   string `hcl:"key_file,optional" mapstructure:"key_file"`
+	SNI       string `hcl:"sni,optional"`
+	Namespace string `hcl:"namespace,optional"`
 }
 
 func (s *ConsulLinkedService) Canonicalize() {
@@ -554,11 +555,12 @@ func (s *ConsulLinkedService) Copy() *ConsulLinkedService {
 	}
 
 	return &ConsulLinkedService{
-		Name:     s.Name,
-		CAFile:   s.CAFile,
-		CertFile: s.CertFile,
-		KeyFile:  s.KeyFile,
-		SNI:      s.SNI,
+		Name:      s.Name,
+		CAFile:    s.CAFile,
+		CertFile:  s.CertFile,
+		KeyFile:   s.KeyFile,
+		SNI:       s.SNI,
+		Namespace: s.Namespace,
 	}
 }
 
